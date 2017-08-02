@@ -42,3 +42,14 @@ class Users(db.Model):
     ## Create an object representation.
     def __rep__(self):
         return "<User: {}>".format(self.username)
+
+    """ This is for the buckets """
+    class Buckets(db.Model):
+        """ This represents the buckets table """
+
+        __tablename__ = "buckets"
+
+        ## Creating the columns for the table.
+        id = db.Column(db.Integer, primary_key = True, sequence(increment=1))
+        name = db.Column(db.String(100))
+        date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
