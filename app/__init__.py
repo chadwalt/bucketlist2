@@ -1,22 +1,23 @@
 """ Setting up the application """
 # Import flask and template operators
 from flask import Flask
+import os
 
 # Import SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
 
-# Define the WSGI application object
-app = Flask(__name__)
+# Import flask_api
+from flask.ext.api import FlaskAPI
 
-# Configurations
-app.config.from_object('config')
 
-app.config.from_object(os.environ['APP_SETTINGS'])
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# initialize sql-alchemy
+db = SQLAlchemy()
 
-# Define the database object which is imported
-db = SQLAlchemy(app)
+def create_app(config_name):
+    app = FlaskAPI(__name__, instance_relative_config=True)
+    app.config.from_object(app_config[config_name])
+    app.config.from_pyfile('config.py')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.init_app(app)
 
-# Build the database:
-# This will create the database file using SQLAlchemy
-db.create_all()
+    return app
