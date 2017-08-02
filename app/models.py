@@ -30,5 +30,11 @@ class Users(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    ## Get all the users.
     def get_all():
         return Users.query.all()
+
+    ## Delete the user.
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
