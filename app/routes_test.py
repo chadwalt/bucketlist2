@@ -1,7 +1,7 @@
 """ Testing the routes of the application. """
 #import json
 import unittest
-import app.mod_auth
+import mod_auth
 from app import app
 
 class testApplicatinRoutes(unittest.TestCase):
