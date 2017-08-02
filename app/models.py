@@ -25,3 +25,10 @@ class Users(db.Model):
         self.password = password
         self.email = email
     
+    ## Save the user.
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def get_all():
+        return Users.query.all()
