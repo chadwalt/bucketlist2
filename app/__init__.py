@@ -1,14 +1,13 @@
 """ Setting up the application """
-# Import flask and template operators
-from flask import Flask
-import os
+
+# Import flask_api
+from flask_api import FlaskAPI
 
 # Import SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
 
-# Import flask_api
-from flask.ext.api import FlaskAPI
-
+## Import the config file in the instance folder.
+from instance.config import app_config
 
 # initialize sql-alchemy
 db = SQLAlchemy()
