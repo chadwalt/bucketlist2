@@ -6,7 +6,8 @@ import os
 ## Import the app => create_app function.
 from app import create_app
 
-from app import app
+## Get the application app_setting which is development.
+config_name = os.getenv('APP_SETTINGS')
 
 if __name__ == '__main__':
     app.run()
