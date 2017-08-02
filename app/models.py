@@ -13,6 +13,15 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key = True, sequence(increment=1))
     first_name = db.Column(db.String(20))
     sur_name = db.Column(db.String(20))
-    usename = db.Column(db.String(20))
+    username = db.Column(db.String(20))
     password = db.Column(db.String(100))
     email = db.Column(db.String(30))
+
+    ## Initializing it.
+    def __init__(self, first_name, sur_name, username, password, email):
+        self.first_name = first_name
+        self.sur_name = sur_name
+        self.username = username
+        self.password = password
+        self.email = email
+    
