@@ -53,3 +53,22 @@ class Users(db.Model):
         id = db.Column(db.Integer, primary_key = True, sequence(increment=1))
         name = db.Column(db.String(100))
         date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+        ## Save the bucket.
+        def save(self):
+            db.session.add(self)
+            db.session.commit()
+
+        ## Get all the buckets.
+        def get_all():
+            return Buckets.query.all()
+
+        ## Delete the bucket.
+        def delete(self):
+            db.session.delete(self)
+            db.session.commit()
+
+        ## Create an object representation.
+        def __rep__(self):
+            return "<Bucket: {}>".format(self.name)
+
