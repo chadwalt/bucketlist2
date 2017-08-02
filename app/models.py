@@ -10,7 +10,7 @@ class Users(db.Model):
     __tablename__ = 'users' ## Defining the table name.
 
     ## Creating the columns for the table.
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True, sequence(increment=1))
     first_name = db.Column(db.String(20))
     sur_name = db.Column(db.String(20))
     usename = db.Column(db.String(20))
