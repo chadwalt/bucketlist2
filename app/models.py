@@ -38,3 +38,7 @@ class Users(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    ## Create an object representation.
+    def __rep__(self):
+        return "<User: {}>".format(self.username)
