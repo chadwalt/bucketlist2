@@ -49,8 +49,6 @@ def create_app(config_name):
             username = request.form['username']
             password = request.form['password']
 
-            print(request.form)
-
             if username and password:
                 ## Get all the users.
                 users = Users.get_all()
@@ -63,5 +61,11 @@ def create_app(config_name):
                     return jsonify({'success': False, 'msg': 'User not found'})
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields'})
+
+    ## This is the route for user login.
+    @app.route('/auth/logout', methods=['POST'])
+    def logout():
+        if request.method == 'POST':            
+            return jsonify({'success': True, 'msg': 'User logged out successfully'})
 
     return app
