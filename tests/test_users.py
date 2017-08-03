@@ -49,6 +49,29 @@ class UsersTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertIn('kyadondo', str(resp.data))
 
+    def test_user_can_be_edited(self):
+        """ Test if the user can be edited. Using the PUT request. """
+
+        resp = self.client().post('/users/', self.user)
+        self.assertEqual(resp.status_code, 201)
+
+        data = {"first_name": "Waltor"}
+        update = self.client().put('/users/1', data)
+        results = self.client().get('/users/1')
+        self.assertIn('Waltor', str(results.data))
+
+    def test_user_deletion(self):
+        """ Test if the user can be deleted. """
+        resp = self.client().post('/users/', self.user)
+        self.assertEqual(resp.status_code, 201)
+
+        result = self.client().delete('/users/1')
+        self.assertEqual(result.status_code, 200)
+
+        ## Then test if the user exists. should return 404
+        res = self.client().get('/users/1')
+        self.assertEqual(result.status_code, 404)
+
 
 if __name__ == '__main__':
     unittest.main()
