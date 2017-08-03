@@ -30,5 +30,11 @@ class UsersTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 201)
         self.assertIn('Kyadondo', str(resp.data)) ## Searches for kyadondo in the users string.
 
+    def test_get_all_users(self):
+        """ This will test get all the users using the GET request."""
+        resp = self.client().get('/users')
+        self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
+        self.assertIn('kyadondo', str(resp.data))
+
 if __name__ == '__main__':
     unittest.main()
