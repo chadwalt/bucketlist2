@@ -10,7 +10,7 @@ class Users(db.Model):
     __tablename__ = 'users' ## Defining the table name.
 
     ## Creating the columns for the table.
-    id = db.Column(db.Integer, primary_key = True, sequence(increment=1))
+    id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     first_name = db.Column(db.String(20))
     sur_name = db.Column(db.String(20))
     username = db.Column(db.String(20))
@@ -51,7 +51,7 @@ class Buckets(db.Model):
     __tablename__ = "buckets"
 
     ## Creating the columns for the table.
-    id = db.Column(db.Integer, primary_key = True, sequence(increment=1))
+    id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     name = db.Column(db.String(100))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
 
@@ -86,7 +86,7 @@ class Bucketitems():
     __tablename__ = "bucketitems"
 
     ## Creating the columns for the table.
-    id = db.Column(db.Integer, primary_key = True, sequence(increment=1))
+    id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(300))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
