@@ -80,7 +80,7 @@ class Buckets(db.Model):
         return "<Bucket: {}>".format(self.name)
 
 """ This is for the bucketitems """
-class Bucketitems():
+class Bucketitems(db.Model):
     """ This represents the buckets table """
 
     __tablename__ = "bucketitems"
@@ -107,7 +107,7 @@ class Bucketitems():
     ## Get all the buckets.
     @staticmethod
     def get_all():
-        return Bucketsitems.query.all()
+        return Bucketitems.query.all()
 
     ## Delete the bucket.
     def delete(self):
