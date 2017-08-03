@@ -159,7 +159,7 @@ class BucketitemsTestCase(unittest.TestCase):
 
         self.app = create_app(config_name='testing');
         self.client = self.app.test_client
-        self.bucketitems = {'name': 'Climbing', 'user_id': '1'}
+        self.bucketitems = {'name': 'Climbing More', 'description': 'Touching the clouds', 'bucket_id': '1'}
 
         ## Binds the app to the current context.
         with self.app.app_context():
