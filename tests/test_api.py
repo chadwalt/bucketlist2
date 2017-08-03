@@ -25,16 +25,16 @@ class UsersTestCase(unittest.TestCase):
             # create all tables
             db.create_all()
 
-    def test_user_creation(self):
-        """ Test user creation using the POST request. """
-        resp = self.client().post('/user', data = self.user)
-        self.assertEqual(resp.status_code, 201)
-        self.assertIn('Kyadondo', str(resp.data)) ## Searches for kyadondo in the users string.
+    def test_user_registration(self):
+        """ Test user registration using the POST request. """
+        resp = self.client().post('/auth/register/', data = self.user)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.    
 
     def test_get_all_users(self):
         """ This will test get all the users using the GET request."""
         resp = self.client().post('/user', data = self.user)
-        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.status_code, 200)
 
         resp = self.client().get('/users')
         self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.

@@ -33,11 +33,11 @@ def create_app(config_name):
             password = request.form['password']
             email = request.form['email']
 
-            if first_name && sur_name && username && password: ## Confirm that the required fields are provided.
+            if first_name and sur_name and username and password: ## Confirm that the required fields are provided.
                 user = Users(first_name, sur_name, username, password, email)
                 user.save() ## Save the user.
 
-                return jsonify({'success': True, 'msg': 'User created successfully', 'status_code': 201})
+                return jsonify({'success': True, 'msg': 'User created successfully'})
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
 
