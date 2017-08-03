@@ -68,4 +68,25 @@ def create_app(config_name):
         if request.method == 'POST':            
             return jsonify({'success': True, 'msg': 'User logged out successfully'})
 
+    ## This is the route for user resetting password.
+    @app.route('/auth/reset-password', methods=['POST'])
+    def resetPassword():
+        if request.method == 'POST':            
+            email = request.form['email']
+            password = request.form['password']
+
+            ## Get the user with this email
+            user = Users.query.filter_by(email=email).first()
+
+            if not user:
+                abort(404) ## Raise the not found status.
+
+            if email and password:               
+                user.password = password
+                user.save()
+                return jsonify({'success': True, 'msg': 'User Password reset successfully'})                
+            else:
+                return jsonify({'success': False, 'msg': 'Please provide all fields'})
+    
+
     return app
