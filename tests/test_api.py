@@ -31,6 +31,14 @@ class UsersTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.    
 
+    def test_user_login(self):
+        """ Test user login using the POST request. """
+        form_data = {'username': 'chadwalt', 'password': '123'}
+        resp = self.client().post('/auth/login', data = form_data)
+        print(resp)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('false', str(resp.data)) ## Searches for chadwalt in the users string.   
+
     def test_get_all_users(self):
         """ This will test get all the users using the GET request."""
         resp = self.client().post('/user', data = self.user)
