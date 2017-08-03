@@ -70,7 +70,14 @@ class UsersTestCase(unittest.TestCase):
 
         ## Then test if the user exists. should return 404
         res = self.client().get('/users/1')
-        self.assertEqual(result.status_code, 404)
+        self.assertEqual(res.status_code, 404)
+
+    def tearDown(self):
+        """teardown all initialized variables."""
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
 
 
 if __name__ == '__main__':
