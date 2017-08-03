@@ -43,32 +43,36 @@ class Users(db.Model):
     def __rep__(self):
         return "<User: {}>".format(self.username)
 
-    """ This is for the buckets """
-    class Buckets(db.Model):
-        """ This represents the buckets table """
+""" This is for the buckets """
+class Buckets(db.Model):
+    """ This represents the buckets table """
 
-        __tablename__ = "buckets"
+    __tablename__ = "buckets"
 
-        ## Creating the columns for the table.
-        id = db.Column(db.Integer, primary_key = True, sequence(increment=1))
-        name = db.Column(db.String(100))
-        date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    ## Creating the columns for the table.
+    id = db.Column(db.Integer, primary_key = True, sequence(increment=1))
+    name = db.Column(db.String(100))
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-        ## Save the bucket.
-        def save(self):
-            db.session.add(self)
-            db.session.commit()
+    ## Save the bucket.
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
-        ## Get all the buckets.
-        def get_all():
-            return Buckets.query.all()
+    ## Get all the buckets.
+    def get_all():
+        return Buckets.query.all()
 
-        ## Delete the bucket.
-        def delete(self):
-            db.session.delete(self)
-            db.session.commit()
+    ## Delete the bucket.
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
-        ## Create an object representation.
-        def __rep__(self):
-            return "<Bucket: {}>".format(self.name)
+    ## Create an object representation.
+    def __rep__(self):
+        return "<Bucket: {}>".format(self.name)
+
+""" This is for the bucketitems """
+class Bucketitems():
+    
 
