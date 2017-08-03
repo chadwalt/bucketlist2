@@ -24,7 +24,8 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    @app.route('/auth/register/', methods=['POST'])
+    ## This route is for registering a user.
+    @app.route('/auth/register', methods=['POST'])
     def register():
         if request.method == 'POST':
             first_name = request.form['first_name']
@@ -41,5 +42,24 @@ def create_app(config_name):
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
 
+    ## This is the route for user login.
+    @app.route('/auth/login', methods=['POST'])
+    def login():
+        if request.method == 'POST':
+            username = request.form['username']
+            password = request.form['password']
+
+            if username and password:
+                ## Get all the users.
+                users = Users.get_all()
+                
+                ## Loop through to get all the users to get this username and password.
+                for user in users:
+                    if user.username == username and user.password == password:
+                        return jsonify({'success': True: 'msg': 'User Logined successfully'})
+                else:
+                    return jsonify({'success': False: 'msg': 'User not found'})
+            else:
+                return jsonify({'success': False: 'msg': 'Please provide all fields'})
 
     return app

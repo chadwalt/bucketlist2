@@ -27,7 +27,7 @@ class UsersTestCase(unittest.TestCase):
 
     def test_user_registration(self):
         """ Test user registration using the POST request. """
-        resp = self.client().post('/auth/register/', data = self.user)
+        resp = self.client().post('/auth/register', data = self.user)
         self.assertEqual(resp.status_code, 200)
         self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.    
 
