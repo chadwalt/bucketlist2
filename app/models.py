@@ -31,6 +31,7 @@ class Users(db.Model):
         db.session.commit()
 
     ## Get all the users.
+    @staticmethod
     def get_all():
         return Users.query.all()
 
@@ -65,6 +66,7 @@ class Buckets(db.Model):
         db.session.commit()
 
     ## Get all the buckets.
+    @staticmethod
     def get_all():
         return Buckets.query.all()
 
@@ -103,6 +105,7 @@ class Bucketitems():
         db.session.commit()
 
     ## Get all the buckets.
+    @staticmethod
     def get_all():
         return Bucketsitems.query.all()
 
