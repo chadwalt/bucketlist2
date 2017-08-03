@@ -54,6 +54,7 @@ class Buckets(db.Model):
     id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     name = db.Column(db.String(100))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
 
     ## Initializing it.
     def __init__(self, name, date_created):
