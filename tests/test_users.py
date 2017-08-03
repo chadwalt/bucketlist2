@@ -32,9 +32,23 @@ class UsersTestCase(unittest.TestCase):
 
     def test_get_all_users(self):
         """ This will test get all the users using the GET request."""
+        resp = self.client().post('/user', data = self.user)
+        self.assertEqual(resp.status_code, 201)
+
         resp = self.client().get('/users')
         self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
         self.assertIn('kyadondo', str(resp.data))
+
+    def test_get_user_by_id(self):
+        """ This will test if the user can be gotten by the id. """
+        resp = self.client().post('/user', data = self.user)
+        self.assertEqual(resp.status_code, 201)
+
+        json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
+        result = self.client().get('/users/{}'.format(json_result['id']))
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('kyadondo', str(resp.data))
+
 
 if __name__ == '__main__':
     unittest.main()
