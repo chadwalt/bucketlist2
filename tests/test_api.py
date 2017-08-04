@@ -123,41 +123,39 @@ class BucketTestCase(unittest.TestCase):
 
     def test_get_all_buckets(self):
         """ This will test get all the users using the GET request."""
-        resp = self.client().get('/buckets')
+        resp = self.client().get('/bucketlists')
         self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
         self.assertIn('Climbing', str(resp.data))
 
     def test_get_bucket_by_id(self):
         """ This will test if the user can be gotten by the id. """
-        resp = self.client().post('/buckets', data = self.bucket)
-        self.assertEqual(resp.status_code, 201)
-
+        resp = self.client().post('/bucketlists/', data = self.bucket)
+        self.assertEqual(resp.status_code, 200)
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
-        result = self.client().get('/buckets/{}'.format(json_result['id']))
+
+        result = self.client().get('/bucketlists/{}'.format(json_result['id']))
         self.assertEqual(result.status_code, 200)
         self.assertIn('climbing', str(resp.data))
 
     def test_bucket_can_be_edited(self):
         """ Test if the bucket can be edited. Using the PUT request. """
 
-        resp = self.client().post('/buckets/', self.bucket)
-        self.assertEqual(resp.status_code, 201)
+        resp = self.client().post('/bucketlists/', data = self.bucket)
+        json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(resp.status_code, 200)
 
         data = {"name": "Mountain Climbing"}
-        update = self.client().put('/buckets/1', data)
-        results = self.client().get('/buckets/1')
-        self.assertIn('Waltor', str(results.data))
+        results = self.client().put('/bucketlists/{}'.format(json_result['id']), data = data)
+        self.assertIn('Mountain', str(results.data))
 
     def test_bucket_deletion(self):
         """ Test if the bucket can be deleted. """
-        resp = self.client().post('/buckets/', self.bucket)
+        resp = self.client().post('/bucketlists/', data = self.bucket)
+        json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(resp.status_code, 201)
 
-        result = self.client().delete('/buckets/1')
-        self.assertEqual(result.status_code, 200)
-
         ## Then test if the user exists. should return 404
-        res = self.client().get('/buckets/1')
+        res = self.client().delete('/bucketlists/{}'.format(json_result['id']))
         self.assertEqual(res.status_code, 404)
 
     def tearDown(self):

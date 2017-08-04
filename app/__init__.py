@@ -99,7 +99,14 @@ def create_app(config_name):
                 bucket = Buckets(name, user_id)
                 bucket.save() ## Save the user.
 
-                return jsonify({'success': True, 'msg': 'Bucket created successfully'})
+                results = {
+                    'id': bucket.id,
+                    'name': bucket.name,
+                    'date_created': bucket.date_created,
+                    'success': True, 
+                    'msg': 'Bucket created successfully'}
+
+                return jsonify(results)
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
         elif request.method == 'GET': ## Return all buckets if the requet if a GET.
@@ -135,7 +142,14 @@ def create_app(config_name):
             bucket.name  = name
             bucket.save()
             
-            return jsonify({'success': True, 'msg': 'Bucketlist saved successfully'})
+            results = {
+                    'id': bucket.id,
+                    'name': bucket.name,
+                    'date_created': bucket.date_created,
+                    'success': True, 
+                    'msg': 'Bucket created successfully'}
+
+            return jsonify(results)
         elif request.method == 'GET': ## Return all buckets if the requet if a GET.
             result = {
                 'id': bucket.id,
