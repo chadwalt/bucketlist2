@@ -94,10 +94,10 @@ class Bucketitems(db.Model):
     bucket_id = db.Column(db.Integer,db.ForeignKey('buckets.id'))
 
     ## Initializing it.
-    def __init__(self, name, description, date_created, bucket_id):
+    def __init__(self, name, description, bucket_id):
         self.name = name
         self.description = description
-        self.date_created = date_created
+        #self.date_created = date_created
         self.bucket_id = bucket_id        
 
     ## Save the bucket.
