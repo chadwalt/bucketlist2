@@ -278,22 +278,39 @@ def create_app(config_name):
 
     ## This route is for creating a bucket.
     @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT', 'DELETE'])
-    def bucketitems_id(id, item_id):
-        bucketitem = Bucketitems.query.filter_by(bucket_id=id, id=item_id)
-        if not bucketitem:
-            abort(404) ## Raise not found error.
-        
-        if request.method == 'DELETE': ## Delete bucket if the request is a DELETE.
+    @app.route('/bucketlists/<int:id>/items/', methods=['POST'])
+    def bucketitems_id(id, item_id = None):  
+        if request.method == 'POST':
+            name = str(request.form('name'))
+            description = str(request.form('description'))
+            bucket_id = int(request.form('bucket_id'))
+
+            bucketitems = Bucketitems(name, description, bucket_id)
+            bucketitems.save() ## Save the user.
+
+            results = {
+                'id': bucketitems.id,
+                'name': bucketitems.name,
+                'description': bucketitems.description,
+                'date_created': bucketitems.date_created,
+                'success': True, 
+                'msg': 'Bucketitem created successfully'}
+
+            return jsonify(results)
+        elif request.method == 'DELETE': ## Delete bucket if the request is a DELETE.
+            bucketitem = Bucketitems.query.get(item_id)
+            if not bucketitem:
+                return jsonify({'success': False, 'msg': 'Bucketlist item with id {} does not exist'.format(item_id)})
             bucketitem.delete()
             
             return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucketitem.id)})
         elif request.method == 'PUT': ## Save bucket if the request is a PUT.
-            name = str(request.data.get('name', ''))
-            description = str(request.data.get('description', ''))
+            bucketitem = Bucketitems.query.get(item_id)
+            name = str(request.form['name'])
+            description = str(request.form['description'])
 
             bucketitem.name  = name
             bucketitem.description = description
-            bucketitem.bucket_id = id
             bucketitem.save()
             
             results = {
@@ -302,7 +319,7 @@ def create_app(config_name):
                 'description': bucketitem.description,
                 'date_created': bucketitem.date_created,
                 'success': True, 
-                'msg': 'Bucket created successfully'
+                'msg': 'Bucketitem created successfully'
                 }
 
             return jsonify(results)    
