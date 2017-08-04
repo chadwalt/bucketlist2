@@ -42,7 +42,7 @@ class UsersTestCase(unittest.TestCase):
         """ Test user logout using the POST request. """
         resp = self.client().post('/auth/logout')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('true', str(resp.data)) ## Searches for chadwalt in the users string.
+        self.assertIn('false', str(resp.data))
         
     def test_user_reset_password(self):
         """ Test user reset password using the POST request. """
