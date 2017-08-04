@@ -88,5 +88,24 @@ def create_app(config_name):
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields'})
     
+    ## This route is for creating a bucket.
+    @app.route('/bucketlists/', methods=['POST', 'GET'])
+    def buckets():
+        if request.method == 'POST': ## Save bucket if the request is a post.
+            name = request.form['name']
+            user_id = request.form['user_id']            
 
+            if name and user_id: ## Confirm that the required fields are provided.
+                bucket = Buckets(name, user_id)
+                bucket.save() ## Save the user.
+
+                return jsonify({'success': True, 'msg': 'Bucket created successfully'})
+            else:
+                return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
+        elif request.method == 'GET': ## Return all buckets if the requet if a GET.
+            user_id = request.form['user_id']
+
+            results = Buckets.query.filter_by(user_id=user_id)
+            return jsonify(results);
+            
     return app

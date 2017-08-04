@@ -57,9 +57,9 @@ class Buckets(db.Model):
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
 
     ## Initializing it.
-    def __init__(self, name, date_created):
+    def __init__(self, name, user_id):
         self.name = name
-        self.date_created = date_created
+        self.user_id = user_id
 
     ## Save the bucket.
     def save(self):
