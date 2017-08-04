@@ -62,16 +62,26 @@ def create_app(config_name):
             username = request.form['username']
             password = request.form['password']
 
-            if username and password:
-                ## Get all the users.
-                users = Users.get_all()
+            if username and password: ## Check if the username and password have been specified.
+                ## Get all the user.
+                user = Users.query.filter_by(username=username).first();
                 
-                ## Loop through to get all the users to get this username and password.
-                for user in users:
-                    if user.username == username and user.password == password:
-                        return jsonify({'success': True, 'msg': 'User Logined successfully'})
+                if user and user.password == password:
+                    auth_token = user.encode_auth_token(user.id)
+                    if auth_token:
+                        response_obj = {
+                            'success': True,
+                            'message': 'Successfully logged in.',
+                            'auth_token': auth_token.decode()
+                        }
+
+                        return jsonify(response_obj)
                 else:
-                    return jsonify({'success': False, 'msg': 'User not found'})
+                   response_obj = {
+                            'success': False,
+                            'message': 'User does not exist.'
+                        }
+                   return jsonify(response_obj) 
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields'})
 
