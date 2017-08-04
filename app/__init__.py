@@ -162,9 +162,27 @@ def create_app(config_name):
 
 
     ## This route is for creating, updating and deleting  a bucketlist item.
-    @app.route('/bucketlists/<id>/items/', methods=['PUT', 'GET', 'DELETE'])
+    @app.route('/bucketlists/<id>/items/', methods=['GET', 'POST'])
     def bucketlists_items(id):            
-        if request.method == 'POST': ## Get bucket items if the request is a post.
+        if request.method == 'POST': ## Add bucket items if the request is a POST.
+            name = request.form['name']
+            description = request.form['description']
+            bucket_id = request.form['bucket_id']
+
+            if name and bucket_id:
+                bucketitem = Bucketitems(name, description, bucket_id)
+
+                result = {
+                    'id': bucketitem.id,
+                    'name': bucketitem.name,
+                    'description': bucketitem.description,
+                    'date_created': bucketitem.date_created,
+                    'bucket_id': bucketitem.bucket_id
+                }
+
+                return jsonify(result)
+
+        elif request.method == 'GET': ## Get bueckt items if the request if a GET
             bucketitems = Bucketitems.query.filter_by(bucket_id=id)
 
             if not bucketitems:

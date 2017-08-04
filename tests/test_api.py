@@ -183,7 +183,7 @@ class BucketitemsTestCase(unittest.TestCase):
 
     def test_bucketitems_creation(self):
         """ Test Bucketitemsitems creation using the POST request. """
-        resp = self.client().post('/bucketitems', data = self.bucketitems)
+        resp = self.client().post('/bucketlists/<id>/items/', data = self.bucketitems)
         self.assertEqual(resp.status_code, 201)
         self.assertIn('Climbing', str(resp.data)) ## Searches for kyadondo in the users string.
 
