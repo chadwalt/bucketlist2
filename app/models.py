@@ -167,5 +167,9 @@ class BlacklistToken(db.Model):
         self.token = token
         self.blacklisted_on = datetime.datetime.now()
 
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
     def __repr__(self):
         return '<id: token: {}'.format(self.token)
