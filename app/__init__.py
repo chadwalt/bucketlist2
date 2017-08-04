@@ -171,7 +171,8 @@ def create_app(config_name):
 
             if name and bucket_id:
                 bucketitem = Bucketitems(name, description, bucket_id)
-
+                bucketitem.save()
+                
                 result = {
                     'id': bucketitem.id,
                     'name': bucketitem.name,
