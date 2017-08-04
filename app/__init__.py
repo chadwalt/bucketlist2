@@ -138,7 +138,8 @@ def create_app(config_name):
             user = Users.query.filter_by(email=email).first()
 
             if not user:
-                abort(404) ## Raise the not found status.
+                #abort(404) ## Raise the not found status.
+                return jsonify({'success': False, 'msg': 'User with the specified email does not exist.'})
 
             if email and password:               
                 user.password = password
