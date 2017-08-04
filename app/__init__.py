@@ -169,8 +169,8 @@ def create_app(config_name):
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
         elif request.method == 'GET': ## Return all buckets if the requet if a GET.
-            ##user_id = request.form['user_id']
-            #buckets = Buckets.query.filter_by(user_id=user_id)
+            user_id = request.form['user_id']
+            buckets = Buckets.query.filter_by(user_id=user_id)
             buckets = Buckets.get_all()
             results = []
 
