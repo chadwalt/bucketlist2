@@ -116,7 +116,7 @@ def create_app(config_name):
                     return jsonify(response_obj)
             else:
                 response_obj = {
-                    'status': 'fail',
+                    'success': False,
                     'msg': resp
                 }
                 return jsonify(response_obj)
