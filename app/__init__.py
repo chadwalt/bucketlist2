@@ -150,11 +150,16 @@ def create_app(config_name):
     
     ## This route is for creating a bucket.
     @app.route('/bucketlists/', methods=['POST', 'GET'])
-    @app.route('/bucketlists/<int:page>', methods=['POST', 'GET']) ## Pagination.
+    @app.route('/bucketlists/<int:page>/', methods=['POST', 'GET']) ## Pagination.
     def buckets(page=1):
         if request.method == 'POST': ## Save bucket if the request is a post.
             name = request.form['name']
-            user_id = request.form['user_id']            
+            user_id = request.form['user_id']   
+
+            # Check if the bucket exists.
+            bucket_exists = Buckets.query.filter_by(name=name).first()         
+            if bucket_exists:
+                return jsonify({'success': False, 'msg': 'Bucket Already exists'})
 
             if name and user_id: ## Confirm that the required fields are provided.
                 bucket = Buckets(name, user_id)
@@ -171,13 +176,13 @@ def create_app(config_name):
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
         elif request.method == 'GET': ## Return all buckets if the requet if a GET.
-            user_id = int(request.data.get('user_id', ''))
-            q = str(request.data.get('q', ''))
+            user_id = int(request.args.get('user_id'))
+            search = str(request.args.get('q'))
 
-            if q: ## Search by name
-                buckets = Buckets.query.filter(name.like('%' + q + '%')).filter(user_id=user_id).paginate(page, ITEMS_PER_PAGE, False).items
+            if search != 'None': ## Search by name
+                buckets = Buckets.query.filter(Buckets.name.like('%' + search + '%')).filter_by(user_id=user_id).paginate(page, ITEMS_PER_PAGE, False).items
             else:
-                buckets = Buckets.query.filter_by(user_id=user_id).filter(user_id=user_id).paginate(page, ITEMS_PER_PAGE, False).items
+                buckets = Buckets.query.filter_by(user_id=user_id).paginate(page, ITEMS_PER_PAGE, False).items
 
             results = []
 
@@ -195,7 +200,7 @@ def create_app(config_name):
     ## This route is for creating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['PUT', 'GET', 'DELETE'])
     def bucketlists_id(id):
-        bucket = Buckets.query.filter_by(id=id)
+        bucket = Buckets.query.filter_by(name=id)
         if not bucket:
             abort(404) ## Raise not found error.
         
