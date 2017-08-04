@@ -16,7 +16,7 @@ db = SQLAlchemy()
 
 def create_app(config_name):
     ## Import the models
-    from app.models import Users, Buckets, Bucketitems 
+    from app.models import Users, Buckets, Bucketitems, BlacklistToken
 
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
@@ -88,8 +88,44 @@ def create_app(config_name):
     ## This is the route for user login.
     @app.route('/auth/logout', methods=['POST'])
     def logout():
-        if request.method == 'POST':            
-            return jsonify({'success': True, 'msg': 'User logged out successfully'})
+        # get auth token
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
+        else:
+            auth_token = ''
+        if auth_token:
+            resp = Users.decode_auth_token(auth_token)
+            if not isinstance(resp, str):
+                # mark the token as blacklisted
+                blacklist_token = BlacklistToken(token=auth_token)
+                try:
+                    # insert the token
+                    blacklist_token.save()
+
+                    response_obj = {
+                        'success': True,
+                        'msg': 'Successfully logged out.'
+                    }
+                    return jsonify(response_obj)
+                except Exception as e:
+                    response_obj = {
+                        'success': False,
+                        'msg': 'Failed to logout.'
+                    }
+                    return jsonify(response_obj)
+            else:
+                response_obj = {
+                    'status': 'fail',
+                    'msg': resp
+                }
+                return jsonify(response_obj)
+        else:
+            response_obj = {
+                'success': False,
+                'msg': 'Provide a valid auth token.'
+            }
+            return jsonify(response_obj)
 
     ## This is the route for user resetting password.
     @app.route('/auth/reset-password', methods=['POST'])
