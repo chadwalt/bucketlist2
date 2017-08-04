@@ -129,7 +129,7 @@ def create_app(config_name):
     ## This route is for creating a bucket.
     @app.route('/bucketlists/<id>', methods=['PUT', 'GET', 'DELETE'])
     def bucketlists_id(id):
-        bucket = Buckets.query.filter_by(id=id).first()
+        bucket = Buckets.query.filter_by(id=id)
         if not bucket:
             abort(404) ## Raise not found error.
         
@@ -159,5 +159,29 @@ def create_app(config_name):
             }
 
             return jsonify(result);
+
+
+    ## This route is for creating, updating and deleting  a bucketlist item.
+    @app.route('/bucketlists/<id>/items/', methods=['PUT', 'GET', 'DELETE'])
+    def bucketlists_items(id):            
+        if request.method == 'POST': ## Get bucket items if the request is a post.
+            bucketitems = Bucketitems.query.filter_by(bucket_id=id)
+
+            if not bucketitems:
+                abort(404) ## Raise not found error.
+
+            results = []
+
+            for bucketitem in bucketitems:                                        
+                obj = {
+                    'id': bucketitem.id,
+                    'name': bucketitem.name,
+                    'description': bucketitem.description,
+                    'date_created': bucketitem.date_created,
+                    'bucket_id': bucketitem.bucket_id
+                }
+                results.append(obj)
+
+            return jsonify(results);
             
     return app
