@@ -200,16 +200,17 @@ def create_app(config_name):
     ## This route is for creating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['PUT', 'GET', 'DELETE'])
     def bucketlists_id(id):
-        bucket = Buckets.query.filter_by(name=id)
+        bucket = Buckets.query.get(id)
         if not bucket:
-            abort(404) ## Raise not found error.
+            return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
         
         if request.method == 'DELETE': ## Save bucket if the request is a post.
+            #user_id = int(request.args.get('user_id'))
             bucket.delete()
             
             return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucket.id)})
         elif request.method == 'PUT': ## Save bucket if the request is a post.
-            name = str(request.data.get('name', ''))
+            name = str(request.args.get('name'))
             bucket.name  = name
             bucket.save()
             
