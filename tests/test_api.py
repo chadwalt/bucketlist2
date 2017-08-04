@@ -117,15 +117,12 @@ class BucketTestCase(unittest.TestCase):
 
     def test_bucket_creation(self):
         """ Test Buckets creation using the POST request. """
-        resp = self.client().post('/buckets', data = self.bucket)
-        self.assertEqual(resp.status_code, 201)
-        self.assertIn('Climbing', str(resp.data)) ## Searches for kyadondo in the users string.
+        resp = self.client().post('/bucketlists/', data = self.bucket)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Climbing', str(resp.data)) ## Searches for climbing.
 
     def test_get_all_buckets(self):
         """ This will test get all the users using the GET request."""
-        resp = self.client().post('/buckets', data = self.bucket)
-        self.assertEqual(resp.status_code, 201)
-
         resp = self.client().get('/buckets')
         self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
         self.assertIn('Climbing', str(resp.data))
