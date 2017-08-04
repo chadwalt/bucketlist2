@@ -1,7 +1,14 @@
 """ This is going to contain the models for the application. Creating users, buckets and bucketitems"""
+# Import the datetime.
+import datetime
 
 ## Import the database.
 from app import db
+
+## Import the JSON Web Token for authentication.
+import jwt
+
+import os
 
 ## This is for creating the users.
 class Users(db.Model):
@@ -39,6 +46,22 @@ class Users(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def encode_auth_token(self, user_id):
+        """ Generates the Auth Token :return: string """
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+                'iat': datetime.datetime.utcnow(),
+                'sub': user_id
+            }
+            return jwt.encode(
+                payload,
+                os.getenv('SECRET'),
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
 
     ## Create an object representation.
     def __rep__(self):
