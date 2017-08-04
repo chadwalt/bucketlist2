@@ -35,10 +35,23 @@ def create_app(config_name):
             email = request.form['email']
 
             if first_name and sur_name and username and password: ## Confirm that the required fields are provided.
-                user = Users(first_name, sur_name, username, password, email)
-                user.save() ## Save the user.
+                ## Check if the user already exists.
+                user = Users.query.filter_by(username=username).first();
+                if not user:                
+                    user = Users(first_name, sur_name, username, password, email)
+                    user.save() ## Save the user.
 
-                return jsonify({'success': True, 'msg': 'User created successfully'})
+                    ## Now generate the auth token.
+                    auth_token = user.encode_auth_token(user.id)
+                    response_obj = {
+                        'success': True, 
+                        'msg': 'User created successfully',
+                        'auth_token': auth_token.decode()
+                    }
+
+                    return jsonify(response_obj)
+                else: 
+                    return jsonify({'success': False, 'msg': 'User already exists'})
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
 
