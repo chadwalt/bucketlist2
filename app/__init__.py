@@ -7,7 +7,7 @@ from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 
 ## Import the config file in the instance folder.
-from instance.config import app_config
+from instance.config import app_config, ITEMS_PER_PAGE
 
 from flask import request, jsonify, abort
 
@@ -149,7 +149,8 @@ def create_app(config_name):
     
     ## This route is for creating a bucket.
     @app.route('/bucketlists/', methods=['POST', 'GET'])
-    def buckets():
+    @app.route('/bucketlists/<int:page>', methods=['POST', 'GET']) ## Pagination.
+    def buckets(page=1):
         if request.method == 'POST': ## Save bucket if the request is a post.
             name = request.form['name']
             user_id = request.form['user_id']            
@@ -173,9 +174,9 @@ def create_app(config_name):
             q = str(request.data.get('q', ''))
 
             if q: ## Search by name
-                buckets = Buckets.query.filter(name.like('%' + q + '%')).filter(user_id=user_id)
+                buckets = Buckets.query.filter(name.like('%' + q + '%')).filter(user_id=user_id).paginate(page, ITEMS_PER_PAGE, False).items
             else:
-                buckets = Buckets.query.filter_by(user_id=user_id)
+                buckets = Buckets.query.filter_by(user_id=user_id).filter(user_id=user_id).paginate(page, ITEMS_PER_PAGE, False).items
 
             results = []
 
@@ -227,7 +228,8 @@ def create_app(config_name):
 
     ## This route is for creating, updating and deleting  a bucketlist item.
     @app.route('/bucketlists/<int:id>/items/', methods=['GET', 'POST'])
-    def bucketlists_items(id):            
+    @app.route('/bucketlists/<int:id>/items/<int:page>', methods=['GET', 'POST']) ## Pagination
+    def bucketlists_items(id, page):            
         if request.method == 'POST': ## Add bucket items if the request is a POST.
             name = request.form['name']
             description = request.form['description']
@@ -248,7 +250,7 @@ def create_app(config_name):
                 return jsonify(result)
 
         elif request.method == 'GET': ## Get bueckt items if the request if a GET
-            bucketitems = Bucketitems.query.filter_by(bucket_id=id)
+            bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, ITEMS_PER_PAGE, False).items
 
             if not bucketitems:
                 abort(404) ## Raise not found error.
