@@ -118,5 +118,32 @@ def create_app(config_name):
                 results.append(obj)
 
             return jsonify(results);
+
+    ## This route is for creating a bucket.
+    @app.route('/bucketlists/<id>', methods=['PUT', 'GET', 'DELETE'])
+    def bucketlists_id(id):
+        bucket = Buckets.query.filter_by(id=id).first()
+        if not bucket:
+            abort(404) ## Raise not found error.
+        
+        if request.method == 'DELETE': ## Save bucket if the request is a post.
+            bucket.delete()
+            
+            return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucket.id)})
+        elif request.method == 'PUT': ## Save bucket if the request is a post.
+            name = str(request.data.get('name', ''))
+            bucket.name  = name
+            bucket.save()
+            
+            return jsonify({'success': True, 'msg': 'Bucketlist saved successfully'})
+        elif request.method == 'GET': ## Return all buckets if the requet if a GET.
+            result = {
+                'id': bucket.id,
+                'name': bucket.name,
+                'date_created': bucket.date_created,
+                'user_id': bucket.user_id
+            }
+
+            return jsonify(result);
             
     return app
