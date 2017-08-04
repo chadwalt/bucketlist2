@@ -122,13 +122,13 @@ class BucketTestCase(unittest.TestCase):
         self.assertIn('Climbing', str(resp.data)) ## Searches for climbing.
 
     def test_get_all_buckets(self):
-        """ This will test get all the users using the GET request."""
+        """ This will test get all the buckets using the GET request."""
         resp = self.client().get('/bucketlists')
         self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
         self.assertIn('Climbing', str(resp.data))
 
     def test_get_bucket_by_id(self):
-        """ This will test if the user can be gotten by the id. """
+        """ This will test if the bucket can be gotten by the id. """
         resp = self.client().post('/bucketlists/', data = self.bucket)
         self.assertEqual(resp.status_code, 200)
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
@@ -182,17 +182,17 @@ class BucketitemsTestCase(unittest.TestCase):
             db.create_all()
 
     def test_bucketitems_creation(self):
-        """ Test Bucketitemsitems creation using the POST request. """
+        """ Test Bucketitems creation using the POST request. """
         resp = self.client().post('/bucketlists/<id>/items/', data = self.bucketitems)
-        self.assertEqual(resp.status_code, 201)
-        self.assertIn('Climbing', str(resp.data)) ## Searches for kyadondo in the users string.
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Climbing', str(resp.data)) ## Searches for climbing in the users string.
 
     def test_get_all_bucketitems(self):
-        """ This will test get all the users using the GET request."""
-        resp = self.client().post('/bucketitems', data = self.bucketitems)
-        self.assertEqual(resp.status_code, 201)
+        """ This will test get all the bucketitems using the GET request."""
+        resp = self.client().post('/bucketlists/<id>/items/', data = self.bucketitems)
+        self.assertEqual(resp.status_code, 200)
 
-        resp = self.client().get('/bucketitems')
+        resp = self.client().get('/bucketlists/<id>/items/')
         self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
         self.assertIn('Climbing', str(resp.data))
 
