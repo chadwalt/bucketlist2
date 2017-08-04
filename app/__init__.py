@@ -229,7 +229,7 @@ def create_app(config_name):
     ## This route is for creating, updating and deleting  a bucketlist item.
     @app.route('/bucketlists/<int:id>/items/', methods=['GET', 'POST'])
     @app.route('/bucketlists/<int:id>/items/<int:page>', methods=['GET', 'POST']) ## Pagination
-    def bucketlists_items(id, page):            
+    def bucketlists_items(id, page=1):            
         if request.method == 'POST': ## Add bucket items if the request is a POST.
             name = request.form['name']
             description = request.form['description']
