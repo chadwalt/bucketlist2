@@ -68,7 +68,11 @@ class Users(db.Model):
         """ Decodes the auth token :param auth_token: :return: integer|string """
         try:
             payload = jwt.decode(auth_token, os.getenv('SECRET'))
-            return payload['sub']
+            is_blacklisted_token = BlacklistToken.check_blacklist(auth_token)
+            if is_blacklisted_token:
+                return 'Token blacklisted. Please log in again.'
+            else:
+                return payload['sub']
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:
