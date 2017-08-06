@@ -257,7 +257,7 @@ def create_app(config_name):
     
     ## This route is for creating a bucket.
     @app.route('/bucketlists/', methods=['POST', 'GET'])
-    @app.route('/bucketlists/<int:page>/', methods=['POST', 'GET']) ## Pagination.
+    #@app.route('/bucketlists/<int:page>/', methods=['POST', 'GET']) ## Pagination.
     def buckets(page=1):
         """ Add Buckets.
         Please provide all the required fields.
@@ -308,11 +308,18 @@ def create_app(config_name):
         elif request.method == 'GET': ## Return all buckets if the requet if a GET.
             user_id = int(request.args.get('user_id'))
             search = str(request.args.get('q'))
+            page = int(request.args.get('page'))
+            rows = int(request.args.get('rows'))
+
+            if not page:
+                page = 1
+            if not rows:
+                rows = ITEMS_PER_PAGE
 
             if search != 'None': ## Search by name
-                buckets = Buckets.query.filter(Buckets.name.like('%' + search + '%')).filter_by(user_id=user_id).paginate(page, ITEMS_PER_PAGE, False).items
+                buckets = Buckets.query.filter(Buckets.name.like('%' + search + '%')).filter_by(user_id=user_id).paginate(page, rows, False).items
             else:
-                buckets = Buckets.query.filter_by(user_id=user_id).paginate(page, ITEMS_PER_PAGE, False).items
+                buckets = Buckets.query.filter_by(user_id=user_id).paginate(page, rows, False).items
 
             results = []
 
@@ -325,7 +332,7 @@ def create_app(config_name):
 
                 results.append(obj)
 
-            return jsonify(results);
+            return jsonify(results)
 
     ## This route is for creating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['PUT', 'GET', 'DELETE'])
