@@ -154,7 +154,7 @@ class BucketTestCase(unittest.TestCase):
         """ Test if the bucket can be deleted. """
         resp = self.client().post('/bucketlists/', data = self.bucket)
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
-        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.status_code, 200)
 
         ## Then test if the user exists. should return 404
         res = self.client().delete('/bucketlists/{}'.format(json_result['id']))
