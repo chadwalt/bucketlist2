@@ -125,7 +125,12 @@ class BucketTestCase(unittest.TestCase):
         """ This will test get all the buckets using the GET request."""
         self.client().post('/bucketlists/', data = self.bucket)
 
-        resp = self.client().get('/bucketlists/')
+        form_obj = {
+            'user_id': '1',
+            'page': '1',
+            'rows': '20'
+        }
+        resp = self.client().get('/bucketlists/', query_string = form_obj)
         self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
         self.assertIn('Climbing', str(resp.data))
 
