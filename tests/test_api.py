@@ -148,7 +148,7 @@ class BucketTestCase(unittest.TestCase):
 
         data = {"name": "Mountain Climbing"}
         results = self.client().put('/bucketlists/{}'.format(json_result['id']), data = data)
-        self.assertIn('Mountain', str(results.data))
+        self.assertIn('true', str(results.data))
 
     def test_bucket_deletion(self):
         """ Test if the bucket can be deleted. """
