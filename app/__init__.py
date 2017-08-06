@@ -337,7 +337,7 @@ def create_app(config_name):
     ## This route is for creating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['PUT', 'GET', 'DELETE'])
     def bucketlists_id(id):
-        """ Add Buckets.
+        """ Modify Buckets.
         Please provide all the required fields.
         ---
         tags:
@@ -396,13 +396,13 @@ def create_app(config_name):
 
     ## This route is for creating, updating and deleting  a bucketlist item.
     @app.route('/bucketlists/<int:id>/items/', methods=['GET', 'POST'])
-    @app.route('/bucketlists/<int:id>/items/<int:page>', methods=['GET', 'POST']) ## Pagination
+    #@app.route('/bucketlists/<int:id>/items/<int:page>', methods=['GET', 'POST']) ## Pagination
     def bucketlists_items(id, page=1):            
         """ Add Buckets Items.
         Please provide all the required fields.
         ---
         tags:
-         - Bucketlist
+         - Bucketlist Items
         consumes:
          - "application/x-www-form-urlencoded"
         produces:
@@ -414,7 +414,7 @@ def create_app(config_name):
             description: ID of the bucket item
             required: true    
          -  name: page
-            in: path
+            in: formData
             type: integer
             description: The page to view
             required: false         
@@ -457,6 +457,7 @@ def create_app(config_name):
                 return jsonify(result)
 
         elif request.method == 'GET': ## Get bueckt items if the request if a GET
+            page = int(request.args.get('page'))
             bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, ITEMS_PER_PAGE, False).items
 
             if not bucketitems:
@@ -477,50 +478,73 @@ def create_app(config_name):
             return jsonify(results);
 
     ## This route is for creating a bucket.
+    #@app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT', 'DELETE'])
+    # @app.route('/bucketlists/<int:id>/items/', methods=['POST'])
+    # def bucketitems_id(id, item_id = None):  
+    #     """ Add Buckets.
+    #     Please provide all the required fields.
+    #     ---
+    #     tags:
+    #      - Bucketlist
+    #     consumes:
+    #      - "application/x-www-form-urlencoded"
+    #     produces:
+    #      - "application/json"
+    #     parameters:
+    #      -  name: email
+    #         in: formData
+    #         type: string
+    #         description: E.g example@example.com
+    #         required: true         
+    #      -  name: password
+    #         in: formData
+    #         type: string
+    #         required: true         
+    #     responses:
+    #         200:
+    #             description: User password has been reset successfully
+    #     """
+    #     if request.method == 'POST':
+    #         name = str(request.form('name'))
+    #         description = str(request.form('description'))
+    #         bucket_id = int(request.form('bucket_id'))
+
+    #         bucketitems = Bucketitems(name, description, bucket_id)
+    #         bucketitems.save() ## Save the user.
+
+    #         results = {
+    #             'id': bucketitems.id,
+    #             'name': bucketitems.name,
+    #             'description': bucketitems.description,
+    #             'date_created': bucketitems.date_created,
+    #             'success': True, 
+    #             'msg': 'Bucketitem created successfully'}
+
+    #         return jsonify(results)        
+
+        ## This route is for creating a bucket.
     @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT', 'DELETE'])
-    @app.route('/bucketlists/<int:id>/items/', methods=['POST'])
     def bucketitems_id(id, item_id = None):  
-        """ Add Buckets.
+        """ Edit Bucket.
         Please provide all the required fields.
         ---
         tags:
-         - Bucketlist
+         - Bucketlist Items
         consumes:
          - "application/x-www-form-urlencoded"
         produces:
          - "application/json"
         parameters:
-         -  name: email
+         -  name: name
+            in: formData
+            type: string            
+            required: true         
+         -  name: description
             in: formData
             type: string
-            description: E.g example@example.com
-            required: true         
-         -  name: password
-            in: formData
-            type: string
-            required: true         
-        responses:
-            200:
-                description: User password has been reset successfully
+            required: true                 
         """
-        if request.method == 'POST':
-            name = str(request.form('name'))
-            description = str(request.form('description'))
-            bucket_id = int(request.form('bucket_id'))
-
-            bucketitems = Bucketitems(name, description, bucket_id)
-            bucketitems.save() ## Save the user.
-
-            results = {
-                'id': bucketitems.id,
-                'name': bucketitems.name,
-                'description': bucketitems.description,
-                'date_created': bucketitems.date_created,
-                'success': True, 
-                'msg': 'Bucketitem created successfully'}
-
-            return jsonify(results)
-        elif request.method == 'DELETE': ## Delete bucket if the request is a DELETE.
+        if request.method == 'DELETE': ## Delete bucket if the request is a DELETE.
             bucketitem = Bucketitems.query.get(item_id)
             if not bucketitem:
                 return jsonify({'success': False, 'msg': 'Bucketlist item with id {} does not exist'.format(item_id)})
