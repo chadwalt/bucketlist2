@@ -49,7 +49,7 @@ class UsersTestCase(unittest.TestCase):
 
         form_data = {'email': 'chadwalt@gmail.com', 'password': '2342'}
         resp = self.client().post('/auth/reset-password', data = form_data)
-        self.assertEqual(resp.status_code, 404)        
+        self.assertEqual(resp.status_code, 200)        
 
     # def test_get_all_users(self):
     #     """ This will test get all the users using the GET request."""
