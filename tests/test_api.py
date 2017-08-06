@@ -11,7 +11,7 @@ sys.path.append(topdir)
 from app import create_app, db
 
 """ This class will test the users """
-class UsersTestCase(unittest.TestCase):
+class ApiTestCase(unittest.TestCase):
     ## Set it up.
     def setUp(self):
         ## Defining test variables and initialize the appliction.
@@ -19,14 +19,16 @@ class UsersTestCase(unittest.TestCase):
         self.app = create_app(config_name='testing');
         self.client = self.app.test_client
         self.user = {'first_name': 'Timothy', 'sur_name' : 'Kyadondo', 'username': 'chadwalt', 'password': '123', 'email': 'chadwalt@outlook.com'}
+        self.bucketitems = {'name': 'Climbing More', 'description': 'Touching the clouds', 'bucket_id': '1'}
+        self.bucket = {'name': 'Climbing', 'user_id': '1'}
 
         ## Binds the app to the current context.
         with self.app.app_context():
             # create all tables
             db.create_all()
 
-    def test_user_registration(self):
-        """ Test user registration using the POST request. """
+    def test_account_create(self):
+        """ Test user account registration using the POST request. """
         resp = self.client().post('/auth/register', data = self.user)
         self.assertEqual(resp.status_code, 200)
         self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.    
@@ -100,29 +102,31 @@ class UsersTestCase(unittest.TestCase):
     #         db.session.remove()
     #         db.drop_all()
 
-""" This will test the bucketlist """
-class BucketTestCase(unittest.TestCase):
+# """ This will test the bucketlist """
+# class BucketTestCase(unittest.TestCase):
     ## Set it up.
-    def setUp(self):
-        ## Defining test variables and initialize the appliction.
+    # def setUp(self):
+    #     ## Defining test variables and initialize the appliction.
 
-        self.app = create_app(config_name='testing');
-        self.client = self.app.test_client
-        self.bucket = {'name': 'Climbing', 'user_id': '1'}
+    #     self.app = create_app(config_name='testing');
+    #     self.client = self.app.test_client
+    #     self.bucket = {'name': 'Climbing', 'user_id': '1'}
 
         ## Binds the app to the current context.
-        with self.app.app_context():
+        # with self.app.app_context():
             # create all tables
-            db.create_all()
+            # db.create_all()
 
     def test_bucket_creation(self):
         """ Test Buckets creation using the POST request. """
+        resp = self.client().post('/auth/register', data = self.user) ## Creating an account.
         resp = self.client().post('/bucketlists/', data = self.bucket)
         self.assertEqual(resp.status_code, 200)
         self.assertIn('Climbing', str(resp.data)) ## Searches for climbing.
 
     def test_get_all_buckets(self):
         """ This will test get all the buckets using the GET request."""
+        resp = self.client().post('/auth/register', data = self.user)
         self.client().post('/bucketlists/', data = self.bucket)
 
         form_obj = {
@@ -136,34 +140,38 @@ class BucketTestCase(unittest.TestCase):
 
     def test_get_bucket_by_id(self):
         """ This will test if the bucket can be gotten by the id. """
-        resp = self.client().post('/bucketlists/', data = self.bucket)
+
+        resp = self.client().post('/auth/register', data = self.user)
+        resp = self.client().post('/bucketlists/', data = self.bucket) ## Save a bucket.
         self.assertEqual(resp.status_code, 200)
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
 
-        result = self.client().get('/bucketlists/{}'.format(json_result['id']))
+        result = self.client().get('/bucketlists/{}'.format(json_result.get('id')))
         self.assertEqual(result.status_code, 200)
-        self.assertIn('climbing', str(resp.data))
+        self.assertIn('Climbing', str(resp.data))
 
-    def test_bucket_can_be_edited(self):
+    def test_bucket_editing(self):
         """ Test if the bucket can be edited. Using the PUT request. """
 
+        resp = self.client().post('/auth/register', data = self.user)
         resp = self.client().post('/bucketlists/', data = self.bucket)
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(resp.status_code, 200)
 
         data = {"name": "Mountain Climbing"}
-        results = self.client().put('/bucketlists/{}'.format(json_result['id']), data = data)
+        results = self.client().put('/bucketlists/{}'.format(json_result.get('id')), data = data)
         self.assertIn('true', str(results.data))
 
     def test_bucket_deletion(self):
         """ Test if the bucket can be deleted. """
-        resp = self.client().post('/bucketlists/', data = self.bucket)
+        resp = self.client().post('/auth/register', data = self.user) ## Creating a user
+        resp = self.client().post('/bucketlists/', data = self.bucket) ## Creating a bucket.
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(resp.status_code, 200)
 
         ## Then test if the user exists. should return 404
         res = self.client().delete('/bucketlists/{}'.format(json_result.get('id')))
-        self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.status_code, 200)
 
     # def tearDown(self):
     #     """teardown all initialized variables."""
@@ -173,29 +181,35 @@ class BucketTestCase(unittest.TestCase):
     #         db.drop_all()
 
 
-""" This will test the bucketlist Items """
-class BucketitemsTestCase(unittest.TestCase):
+# """ This will test the bucketlist Items """
+# class BucketitemsTestCase(unittest.TestCase):
     ## Set it up.
-    def setUp(self):
-        ## Defining test variables and initialize the appliction.
+    # def setUp(self):
+    #     ## Defining test variables and initialize the appliction.
 
-        self.app = create_app(config_name='testing');
-        self.client = self.app.test_client
-        self.bucketitems = {'name': 'Climbing More', 'description': 'Touching the clouds', 'bucket_id': '1'}
+    #     self.app = create_app(config_name='testing');
+    #     self.client = self.app.test_client
+    #     self.bucketitems = {'name': 'Climbing More', 'description': 'Touching the clouds', 'bucket_id': '1'}
 
-        ## Binds the app to the current context.
-        with self.app.app_context():
-            # create all tables
-            db.create_all()
+    #     ## Binds the app to the current context.
+    #     with self.app.app_context():
+    #         # create all tables
+    #         db.create_all()
 
     def test_bucketitems_creation(self):
         """ Test Bucketitems creation using the POST request. """
+
+        resp = self.client().post('/auth/register', data = self.user)
+        resp = self.client().post('/bucketlists/', data = self.bucket)
         resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems)
         self.assertEqual(resp.status_code, 200)
         self.assertIn('Climbing', str(resp.data)) ## Searches for climbing in the users string.
 
     def test_get_all_bucketitems(self):
         """ This will test get all the bucketitems using the GET request."""
+
+        resp = self.client().post('/auth/register', data = self.user)
+        resp = self.client().post('/bucketlists/', data = self.bucket)
         resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems)
         self.assertEqual(resp.status_code, 200)
 
@@ -215,12 +229,16 @@ class BucketitemsTestCase(unittest.TestCase):
 
     def test_bucketitems_can_be_edited(self):
         """ Test if the bucketitems can be edited. Using the PUT request. """
+        
+        resp = self.client().post('/auth/register', data = self.user)
+        resp = self.client().post('/bucketlists/', data = self.bucket)
+        resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems) ## Create the item.
 
         form_data = {'name': 'walking on the moon', 'description': 'Go by the space craft'}
         resp = self.client().put('/bucketlists/1/items/1', data = form_data)
         self.assertEqual(resp.status_code, 200)
 
-        self.assertIn('Climbing', str(resp.data))
+        self.assertIn('true', str(resp.data))
 
     def test_bucketitems_deletion(self):
         """ Test if the bucketitems can be deleted. """
