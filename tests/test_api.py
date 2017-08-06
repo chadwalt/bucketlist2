@@ -157,7 +157,7 @@ class BucketTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
 
         ## Then test if the user exists. should return 404
-        res = self.client().delete('/bucketlists/{}'.format(json_result['id']))
+        res = self.client().delete('/bucketlists/{}'.format(json_result.get('id')))
         self.assertEqual(res.status_code, 404)
 
     # def tearDown(self):
