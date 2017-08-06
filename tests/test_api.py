@@ -93,12 +93,12 @@ class UsersTestCase(unittest.TestCase):
     #     res = self.client().get('/users/1')
     #     self.assertEqual(res.status_code, 404)
 
-    def tearDown(self):
-        """teardown all initialized variables."""
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
+    # def tearDown(self):
+    #     """teardown all initialized variables."""
+    #     with self.app.app_context():
+    #         # drop all tables
+    #         db.session.remove()
+    #         db.drop_all()
 
 """ This will test the bucketlist """
 class BucketTestCase(unittest.TestCase):
@@ -160,12 +160,12 @@ class BucketTestCase(unittest.TestCase):
         res = self.client().delete('/bucketlists/{}'.format(json_result['id']))
         self.assertEqual(res.status_code, 404)
 
-    def tearDown(self):
-        """teardown all initialized variables."""
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
+    # def tearDown(self):
+    #     """teardown all initialized variables."""
+    #     with self.app.app_context():
+    #         # drop all tables
+    #         db.session.remove()
+    #         db.drop_all()
 
 
 """ This will test the bucketlist Items """
