@@ -88,7 +88,7 @@ def create_app(config_name):
                     response_obj = {
                         'success': True, 
                         'msg': 'User created successfully',
-                        'auth_token': auth_token.decode()
+                        'auth_token': auth_token
                     }
 
                     return jsonify(response_obj)
@@ -137,7 +137,7 @@ def create_app(config_name):
                         response_obj = {
                             'success': True,
                             'message': 'Successfully logged in.',
-                            'auth_token': auth_token.decode()
+                            'auth_token': auth_token
                         }
 
                         return jsonify(response_obj)
