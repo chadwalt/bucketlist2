@@ -11,6 +11,9 @@ from instance.config import app_config, ITEMS_PER_PAGE
 
 from flask import request, jsonify, abort
 
+## Import flasgger for API documentation.
+from flasgger import Swagger
+
 # initialize sql-alchemy
 db = SQLAlchemy()
 
@@ -19,6 +22,7 @@ def create_app(config_name):
     from app.models import Users, Buckets, Bucketitems, BlacklistToken
 
     app = FlaskAPI(__name__, instance_relative_config=True)
+    swagger = Swagger(app) ## Adding swagger.
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -27,6 +31,44 @@ def create_app(config_name):
     ## This route is for registering a user.
     @app.route('/auth/register', methods=['POST'])
     def register():
+        """ Registering a user.
+        Please provide all the required fields.
+        ---
+        tags:
+         - User Account
+        consumes:
+         - "application/json"
+        produces:
+         - "application/json"
+        parameters:
+         -  name: first_name
+            in: body
+            type: string
+            description: First Name E.g Timothy
+            required: true
+         -  name: sur_name
+            in: body
+            type: string
+            description: SurName E.g Kyadondo
+            required: true
+         -  name: username
+            in: body
+            type: string
+            description: Username E.g chadalt
+            required: true
+         -  name: password
+            in: body
+            type: string
+            required: true
+         -  name: email
+            in: body
+            type: string
+            description: E.g example@example.com
+            required: false
+        responses:
+            200:
+                description: User has been created successfully
+        """
         if request.method == 'POST':
             first_name = request.form['first_name']
             sur_name = request.form['sur_name']
