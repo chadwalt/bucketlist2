@@ -37,31 +37,31 @@ def create_app(config_name):
         tags:
          - User Account
         consumes:
-         - "application/json"
+         - "application/x-www-form-urlencoded"
         produces:
          - "application/json"
         parameters:
          -  name: first_name
-            in: body
+            in: formData
             type: string
             description: First Name E.g Timothy
             required: true
          -  name: sur_name
-            in: body
+            in: formData
             type: string
             description: SurName E.g Kyadondo
             required: true
          -  name: username
-            in: body
+            in: formData
             type: string
             description: Username E.g chadalt
             required: true
          -  name: password
-            in: body
+            in: formData
             type: string
             required: true
          -  name: email
-            in: body
+            in: formData
             type: string
             description: E.g example@example.com
             required: false
@@ -100,6 +100,29 @@ def create_app(config_name):
     ## This is the route for user login.
     @app.route('/auth/login', methods=['POST'])
     def login():
+        """ Logining a user.
+        Please provide all the required fields.
+        ---
+        tags:
+         - User Account
+        consumes:
+         - "application/x-www-form-urlencoded"
+        produces:
+         - "application/json"
+        parameters:         
+         -  name: username
+            in: formData
+            type: string
+            description: Username E.g chadalt
+            required: true
+         -  name: password
+            in: formData
+            type: string
+            required: true         
+        responses:
+            200:
+                description: User logined successfully
+        """
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
@@ -130,6 +153,25 @@ def create_app(config_name):
     ## This is the route for user login.
     @app.route('/auth/logout', methods=['POST'])
     def logout():
+        """ logging out a user.
+        Please provide all the required fields.
+        ---
+        tags:
+         - User Account
+        consumes:
+         - "application/x-www-form-urlencoded"
+        produces:
+         - "application/json"
+        parameters:         
+         -  name: token
+            in: header
+            type: string
+            description: Auth Token
+            required: true      
+        responses:
+            200:
+                description: User has been logged out successfully
+        """
         # get auth token
         auth_header = request.headers.get('Authorization')
         if auth_header:
@@ -172,6 +214,29 @@ def create_app(config_name):
     ## This is the route for user resetting password.
     @app.route('/auth/reset-password', methods=['POST'])
     def resetPassword():
+        """ Resetting a user password.
+        Please provide all the required fields.
+        ---
+        tags:
+         - User Account
+        consumes:
+         - "application/x-www-form-urlencoded"
+        produces:
+         - "application/json"
+        parameters:
+         -  name: email
+            in: formData
+            type: string
+            description: E.g example@example.com
+            required: true         
+         -  name: password
+            in: formData
+            type: string
+            required: true         
+        responses:
+            200:
+                description: User password has been reset successfully
+        """
         if request.method == 'POST':            
             email = request.form['email']
             password = request.form['password']
@@ -194,6 +259,29 @@ def create_app(config_name):
     @app.route('/bucketlists/', methods=['POST', 'GET'])
     @app.route('/bucketlists/<int:page>/', methods=['POST', 'GET']) ## Pagination.
     def buckets(page=1):
+        """ Add Buckets.
+        Please provide all the required fields.
+        ---
+        tags:
+         - Bucketlist
+        consumes:
+         - "application/x-www-form-urlencoded"
+        produces:
+         - "application/json"
+        parameters:
+         -  name: name
+            in: formData
+            type: string
+            description: E.g Climbing the Mountain
+            required: true         
+         -  name: user_id
+            in: formData
+            type: integer
+            required: true         
+        responses:
+            200:
+                description: Bucket added successfully
+        """
         if request.method == 'POST': ## Save bucket if the request is a post.
             name = request.form['name']
             user_id = request.form['user_id']   
@@ -242,6 +330,30 @@ def create_app(config_name):
     ## This route is for creating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['PUT', 'GET', 'DELETE'])
     def bucketlists_id(id):
+        """ Add Buckets.
+        Please provide all the required fields.
+        ---
+        tags:
+         - Bucketlist
+        consumes:
+         - "application/x-www-form-urlencoded"
+        produces:
+         - "application/json"
+        parameters:
+         -  name: id
+            in: path
+            type: integer
+            description: E.g ID of the bucket
+            required: true         
+         -  name: name
+            in: formData
+            description: The name of the bucket.
+            type: string
+            required: true         
+        responses:
+            200:
+                description: User password has been reset successfully
+        """
         bucket = Buckets.query.get(id)
         if not bucket:
             return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
@@ -279,6 +391,45 @@ def create_app(config_name):
     @app.route('/bucketlists/<int:id>/items/', methods=['GET', 'POST'])
     @app.route('/bucketlists/<int:id>/items/<int:page>', methods=['GET', 'POST']) ## Pagination
     def bucketlists_items(id, page=1):            
+        """ Add Buckets Items.
+        Please provide all the required fields.
+        ---
+        tags:
+         - Bucketlist
+        consumes:
+         - "application/x-www-form-urlencoded"
+        produces:
+         - "application/json"
+        parameters:
+         -  name: id
+            in: path
+            type: integer
+            description: ID of the bucket item
+            required: true    
+         -  name: page
+            in: path
+            type: integer
+            description: The page to view
+            required: false         
+         -  name: name
+            in: formData
+            type: string
+            description: Name of the bucket item
+            required: true   
+         -  name: description
+            in: formData
+            type: string
+            description: Detail about the item
+            required: true    
+         -  name: bucket_id
+            in: formData
+            type: integer
+            description: The ID of the bucket
+            required: true          
+        responses:
+            200:
+                description: User password has been reset successfully
+        """
         if request.method == 'POST': ## Add bucket items if the request is a POST.
             name = request.form['name']
             description = request.form['description']
@@ -322,6 +473,29 @@ def create_app(config_name):
     @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT', 'DELETE'])
     @app.route('/bucketlists/<int:id>/items/', methods=['POST'])
     def bucketitems_id(id, item_id = None):  
+        """ Add Buckets.
+        Please provide all the required fields.
+        ---
+        tags:
+         - Bucketlist
+        consumes:
+         - "application/x-www-form-urlencoded"
+        produces:
+         - "application/json"
+        parameters:
+         -  name: email
+            in: formData
+            type: string
+            description: E.g example@example.com
+            required: true         
+         -  name: password
+            in: formData
+            type: string
+            required: true         
+        responses:
+            200:
+                description: User password has been reset successfully
+        """
         if request.method == 'POST':
             name = str(request.form('name'))
             description = str(request.form('description'))
