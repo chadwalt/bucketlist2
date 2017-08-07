@@ -458,11 +458,13 @@ def create_app(config_name):
 
         elif request.method == 'GET': ## Get bueckt items if the request if a GET
             if not request.args.get('page'):
-                page = ITEMS_PER_PAGE
+                page = 1
             else:
                 page = int(request.args.get('page'))
-                
-            bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, page, False).items
+
+            rows = ITEMS_PER_PAGE
+
+            bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, rows, False).items
 
             if not bucketitems:
                 abort(404) ## Raise not found error.
