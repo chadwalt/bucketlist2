@@ -5,7 +5,7 @@ python:
 cache: pip
 
 # command to install dependencies
-install: pip install -r requirements.text
+install: pip install -r requirements.txt
 
 services:
   - postgresql
