@@ -6,81 +6,70 @@
     <body>
         <h1>Bucketlist API</h1>
 
-[![Build Status](https://travis-ci.org/chadwalt/bucketlist2.svg?branch=master)](https://travis-ci.org/chadwalt/bucketlist2) [![Coverage Status](https://coveralls.io/repos/github/chadwalt/bucketlist2/badge.svg?branch=master)](https://coveralls.io/github/chadwalt/bucketlist2?branch=master)
+        <p>This is an api, which you provide data to, to store things you want to do before you die.</p>
 
-This is an api, which you provide data to, to store things you want to do before you die.
+        <h3>How to install the API.</h3>
 
-### How to install the API.
+        <p>
+            Go to <a href='https://github.com/chadwalt/bucketlist2'>[GitHub: Bucketlist2]</a> and clone the Repository
+            Navigate to the installation folder or create a directory if you have not created one yet, like
+        </p>
 
-Go to [GitHub: Bucketlist2](https://github.com/chadwalt/bucketlist2 "Buketlist2") and clone the Repository
+        <code style="font-weight:bold;font-style:italic;">
+            $ mkdir bucketlist_api
+        </code>
 
-Navigate to the installation folder or create a directory if you have not created one yet, like
+        <p>Move to the created directory</p>
 
-```
-mkdir bucketlist_api
-```
+        <code style="font-weight:bold;font-style:italic;">
+            $ cd bucketlist_api
+        </code>
+            
+        <p>Now clone the repository.</p>
 
-Move to the created directory
+        <p>
+            git clone https://github.com/chadwalt/bucketlist2 <br>            
+            Make sure you have the lastest python installed. [Python.org](https://www.python.org/downloads/") <br>
+            Download and install Postgressql if you dont have it. [Postgresql](https://www.postgresql.org/download/") 
+        </p>
 
-```
-$ cd bucketlist_api
-```
-
-Now clone the repository.
-
-```
-git clone https://github.com/chadwalt/bucketlist2
-```
-
-Make sure you have the lastest python installed. [Python.org](https://www.python.org/downloads/")
-
-Download and install Postgressql if you dont have it. [Postgresql](https://www.postgresql.org/download/") 
-
-### Now Setup Virtual Environment
-
-``` 
-$ pip install virtualenv
-```
-
-``` 
-$ pip install virtualenvwrapper 
-```
-
-```
-$ export WORKHOME=~/Envs
-```
-
-```
-$ source /usr/local/bin/virtualenvwrapper.sh
-```
-
-```
-$ mkvirtualenv bucketlistapi
-```
-
-```
-$ workon bucketlistapi
-```
-
-**Install the requirements**
-
-```
-$ pip install requirements.txt
-```
-
-**Provide the flask application environment variable**
-
-```
-$ export FLASK_APP=run.py
-```
-
-### Run the flask server
-
-``` 
-$ flask run 
-```
+        <h3>Now Setup Virtual Environment</h3>
 
 
+        <code style="font-weight:bold;font-style:italic;">
+            $ pip install virtualenv
+        </code>
 
+        <code style="font-weight:bold;font-style:italic;">
+            $ pip install virtualenvwrapper 
+        </code>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ export WORKHOME=~/Envs
+        </code>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ source /usr/local/bin/virtualenvwrapper.sh
+        </code>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ mkvirtualenv bucketlistapi
+        </code>
+
+        <h4>Install the requirements</h4>
+        <code style="font-weight:bold;font-style:italic;">
+            $ pip install requirements.txt
+        </code>
+
+        <h4>Provide the flask application environment variable</h4>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ export FLASK_APP=run.py
+        </code>
+
+        <h4>Run the flask server</h4>
+        <code style="font-weight:bold;font-style:italic;">
+            $ flask run 
+        </code>
     </body>
 </html>
