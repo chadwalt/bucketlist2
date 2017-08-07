@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 ## Import the config file in the instance folder.
 from instance.config import app_config, ITEMS_PER_PAGE
 
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort,render_template
 
 ## Import flasgger for API documentation.
 from flasgger import Swagger
@@ -27,6 +27,10 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
+    
+    @app.route('/')
+    def index():
+        return render_template("index.html")
 
     ## This route is for registering a user.
     @app.route('/auth/register', methods=['POST'])
