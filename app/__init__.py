@@ -549,9 +549,9 @@ def create_app(config_name):
 
     #         return jsonify(results)        
 
-        ## This route is for creating a bucket.
-    @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT', 'DELETE'])
-    def bucketitems_id(id, item_id = None):  
+        ## This route is for Updating a bucket.
+    @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT'])
+    def update_bucketitems_id(id, item_id = None):  
         """ Edit Bucket.
         Please provide all the required fields.
         ---
@@ -562,6 +562,14 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: id
+            in: path
+            type: integer            
+            required: true         
+         -  name: item_id
+            in: path
+            type: integer
+            required: true  
          -  name: name
             in: formData
             type: string            
@@ -571,14 +579,7 @@ def create_app(config_name):
             type: string
             required: true                 
         """
-        if request.method == 'DELETE': ## Delete bucket if the request is a DELETE.
-            bucketitem = Bucketitems.query.get(item_id)
-            if not bucketitem:
-                return jsonify({'success': False, 'msg': 'Bucketlist item with id {} does not exist'.format(item_id)})
-            bucketitem.delete()
-            
-            return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucketitem.id)})
-        elif request.method == 'PUT': ## Save bucket if the request is a PUT.
+        if request.method == 'PUT': ## Save bucket if the request is a PUT.
             bucketitem = Bucketitems.query.get(item_id)
             name = str(request.form['name'])
             description = str(request.form['description'])
@@ -593,8 +594,38 @@ def create_app(config_name):
                 'description': bucketitem.description,
                 'date_created': bucketitem.date_created,
                 'success': True, 
-                'msg': 'Bucketitem created successfully'
+                'msg': 'Bucketitem updated successfully'
                 }
 
             return jsonify(results)    
+
+    @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['DELETE'])
+    def bucketitems_id(id, item_id = None):  
+        """ Delete Bucket item.
+        Please provide all the required fields.
+        ---
+        tags:
+         - Bucketlist Items
+        consumes:
+         - "application/x-www-form-urlencoded"
+        produces:
+         - "application/json"
+        parameters:
+         -  name: id
+            in: path
+            type: integer            
+            required: true         
+         -  name: item_id
+            in: path
+            type: integer
+            required: true                 
+        """
+        if request.method == 'DELETE': ## Delete bucket if the request is a DELETE.
+            bucketitem = Bucketitems.query.get(item_id)
+            if not bucketitem:
+                return jsonify({'success': False, 'msg': 'Bucketlist item with id {} does not exist'.format(item_id)})
+            bucketitem.delete()
+            
+            return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucketitem.id)})        
+
     return app
