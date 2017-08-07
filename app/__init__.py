@@ -457,8 +457,12 @@ def create_app(config_name):
                 return jsonify(result)
 
         elif request.method == 'GET': ## Get bueckt items if the request if a GET
-            page = int(request.args.get('page'))
-            bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, ITEMS_PER_PAGE, False).items
+            if not request.args.get('page'):
+                page = ITEMS_PER_PAGE
+            else:
+                page = int(request.args.get('page'))
+                
+            bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, page, False).items
 
             if not bucketitems:
                 abort(404) ## Raise not found error.
