@@ -394,10 +394,9 @@ def create_app(config_name):
             return jsonify(result);
 
 
-    ## This route is for creating, updating and deleting  a bucketlist item.
-    @app.route('/bucketlists/<int:id>/items/', methods=['GET', 'POST'])
-    #@app.route('/bucketlists/<int:id>/items/<int:page>', methods=['GET', 'POST']) ## Pagination
-    def bucketlists_items(id, page=1):            
+    ## This route is for creating a bucketlist item.
+    @app.route('/bucketlists/<int:id>/items/', methods=['POST'])
+    def add_bucketlists_items(id, page=1):            
         """ Add Buckets Items.
         Please provide all the required fields.
         ---
@@ -407,17 +406,7 @@ def create_app(config_name):
          - "application/x-www-form-urlencoded"
         produces:
          - "application/json"
-        parameters:
-         -  name: id
-            in: path
-            type: integer
-            description: ID of the bucket item
-            required: true    
-         -  name: page
-            in: formData
-            type: integer
-            description: The page to view
-            required: false         
+        parameters:         
          -  name: name
             in: formData
             type: string
@@ -435,7 +424,7 @@ def create_app(config_name):
             required: true          
         responses:
             200:
-                description: User password has been reset successfully
+                description: Bucket Item added successfully.
         """
         if request.method == 'POST': ## Add bucket items if the request is a POST.
             name = request.form['name']
@@ -454,9 +443,41 @@ def create_app(config_name):
                     'bucket_id': bucketitem.bucket_id
                 }
 
-                return jsonify(result)
-
-        elif request.method == 'GET': ## Get bueckt items if the request if a GET
+                return jsonify(result)        
+    
+    ## This route is for getting bucketlist items.
+    @app.route('/bucketlists/<int:id>/items/', methods=['GET'])
+    def get_bucketlists_items(id):            
+        """ Get all Buckets Items.
+        Please provide all the required fields.
+        ---
+        tags:
+         - Bucketlist Items
+        consumes:
+         - "application/x-www-form-urlencoded"
+        produces:
+         - "application/json"
+        parameters:
+         -  name: id
+            in: path
+            type: integer
+            description: ID of the Bucketlist
+            required: true    
+         -  name: page
+            in: formData
+            type: integer
+            description: The page to view
+            required: false
+         -  name: rows
+            in: formData
+            type: integer
+            description: Number of records/rows to return.
+            required: false                      
+        responses:
+            200:
+                description: All Bucket items.
+        """
+        if request.method == 'GET': ## Get bueckt items if the request if a GET
             if not request.args.get('page'):
                 page = 1
             else:
