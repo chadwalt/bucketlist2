@@ -32,6 +32,7 @@ def create_app(config_name):
     db.init_app(app)
 
     CORS(app) ## Enable Cross Site Origin.
+    app.config['CORS_HEADERS'] = 'Content-Type'
 
     @app.route('/')
     def index():
@@ -108,7 +109,7 @@ def create_app(config_name):
 
     ## This is the route for user login.
     @app.route('/auth/login', methods=['POST'])
-    #@allow_cross_origin
+    @cross_origin()
     def login():
         """ Logining a user.
         Please provide all the required fields.
