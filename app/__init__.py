@@ -14,6 +14,9 @@ from flask import request, jsonify, abort,render_template
 ## Import flasgger for API documentation.
 from flasgger import Swagger
 
+## Importing flask_cors to enable cross_origin.
+from flask_cors import CORS, cross_origin
+
 # initialize sql-alchemy
 db = SQLAlchemy()
 
@@ -23,6 +26,7 @@ def create_app(config_name):
 
     app = FlaskAPI(__name__, instance_relative_config=True)
     swagger = Swagger(app) ## Adding swagger.
+    CORS(app) ## Enable Cross Site Origin.
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -103,7 +107,7 @@ def create_app(config_name):
 
     ## This is the route for user login.
     @app.route('/auth/login', methods=['POST'])
-    @allow_cross_origin
+    #@allow_cross_origin
     def login():
         """ Logining a user.
         Please provide all the required fields.
