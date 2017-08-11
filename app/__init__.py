@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 ## Import the config file in the instance folder.
 from instance.config import app_config, ITEMS_PER_PAGE
 
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort,render_template
 
 ## Import flasgger for API documentation.
 from flasgger import Swagger
@@ -27,6 +27,10 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
+
+    @app.route('/')
+    def index():
+        return render_template("index.html")
 
     ## This route is for registering a user.
     @app.route('/auth/register', methods=['POST'])
@@ -79,26 +83,27 @@ def create_app(config_name):
             if first_name and sur_name and username and password: ## Confirm that the required fields are provided.
                 ## Check if the user already exists.
                 user = Users.query.filter_by(username=username).first();
-                if not user:                
+                if not user:
                     user = Users(first_name, sur_name, username, password, email)
                     user.save() ## Save the user.
 
                     ## Now generate the auth token.
                     auth_token = user.encode_auth_token(user.id)
                     response_obj = {
-                        'success': True, 
+                        'success': True,
                         'msg': 'User created successfully',
                         'auth_token': auth_token
                     }
 
                     return jsonify(response_obj)
-                else: 
+                else:
                     return jsonify({'success': False, 'msg': 'User already exists'})
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
 
     ## This is the route for user login.
     @app.route('/auth/login', methods=['POST'])
+    @allow_cross_origin
     def login():
         """ Logining a user.
         Please provide all the required fields.
@@ -109,7 +114,7 @@ def create_app(config_name):
          - "application/x-www-form-urlencoded"
         produces:
          - "application/json"
-        parameters:         
+        parameters:
          -  name: username
             in: formData
             type: string
@@ -118,7 +123,7 @@ def create_app(config_name):
          -  name: password
             in: formData
             type: string
-            required: true         
+            required: true
         responses:
             200:
                 description: User logined successfully
@@ -130,7 +135,7 @@ def create_app(config_name):
             if username and password: ## Check if the username and password have been specified.
                 ## Get all the user.
                 user = Users.query.filter_by(username=username).first();
-                
+
                 if user and user.password == password:
                     auth_token = user.encode_auth_token(user.id)
                     if auth_token:
@@ -146,7 +151,7 @@ def create_app(config_name):
                             'success': False,
                             'message': 'User does not exist.'
                         }
-                   return jsonify(response_obj) 
+                   return jsonify(response_obj)
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields'})
 
@@ -162,12 +167,12 @@ def create_app(config_name):
          - "application/x-www-form-urlencoded"
         produces:
          - "application/json"
-        parameters:         
+        parameters:
          -  name: token
             in: header
             type: string
             description: Auth Token
-            required: true      
+            required: true
         responses:
             200:
                 description: User has been logged out successfully
@@ -228,16 +233,16 @@ def create_app(config_name):
             in: formData
             type: string
             description: E.g example@example.com
-            required: true         
+            required: true
          -  name: password
             in: formData
             type: string
-            required: true         
+            required: true
         responses:
             200:
                 description: User password has been reset successfully
         """
-        if request.method == 'POST':            
+        if request.method == 'POST':
             email = request.form['email']
             password = request.form['password']
 
@@ -248,13 +253,13 @@ def create_app(config_name):
                 #abort(404) ## Raise the not found status.
                 return jsonify({'success': False, 'msg': 'User with the specified email does not exist.'})
 
-            if email and password:               
+            if email and password:
                 user.password = password
                 user.save()
-                return jsonify({'success': True, 'msg': 'User Password reset successfully'})                
+                return jsonify({'success': True, 'msg': 'User Password reset successfully'})
             else:
                 return jsonify({'success': False, 'msg': 'Please provide all fields'})
-    
+
     ## This route is for creating a bucket.
     @app.route('/bucketlists/', methods=['POST'])
     def add_buckets():
@@ -272,21 +277,21 @@ def create_app(config_name):
             in: formData
             type: string
             description: E.g Climbing the Mountain
-            required: true         
+            required: true
          -  name: user_id
             in: formData
             type: integer
-            required: true         
+            required: true
         responses:
             200:
                 description: Bucket added successfully
         """
         if request.method == 'POST': ## Save bucket if the request is a post.
             name = request.form['name']
-            user_id = request.form['user_id']   
+            user_id = request.form['user_id']
 
             # Check if the bucket exists.
-            bucket_exists = Buckets.query.filter_by(name=name).first()         
+            bucket_exists = Buckets.query.filter_by(name=name).first()
             if bucket_exists:
                 return jsonify({'success': False, 'msg': 'Bucket Already exists'})
 
@@ -298,12 +303,12 @@ def create_app(config_name):
                     'id': bucket.id,
                     'name': bucket.name,
                     'date_created': bucket.date_created,
-                    'success': True, 
+                    'success': True,
                     'msg': 'Bucket created successfully'}
 
                 return jsonify(results)
             else:
-                return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})        
+                return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
 
     ## This route is for getting all buckets.
     @app.route('/bucketlists/', methods=['GET'])
@@ -317,15 +322,15 @@ def create_app(config_name):
          - "application/x-www-form-urlencoded"
         produces:
          - "application/json"
-        parameters:                
+        parameters:
          -  name: user_id
             in: formData
             type: integer
-            required: true  
+            required: true
          -  name: q
             in: formData
             type: string
-            required: false 
+            required: false
          -  name: page
             in: formData
             type: integer
@@ -333,7 +338,7 @@ def create_app(config_name):
          -  name: rows
             in: formData
             type: integer
-            required: false            
+            required: false
         responses:
             200:
                 description: All buckets.
@@ -384,7 +389,7 @@ def create_app(config_name):
             in: path
             type: integer
             description: E.g ID of the bucket
-            required: true                         
+            required: true
         responses:
             200:
                 description: Bucketlist deleted successfully
@@ -392,12 +397,12 @@ def create_app(config_name):
         bucket = Buckets.query.get(id)
         if not bucket:
             return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
-        
+
         if request.method == 'DELETE': ## Save bucket if the request is a post.
             #user_id = int(request.args.get('user_id'))
             bucket.delete()
-            
-            return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucket.id)})        
+
+            return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucket.id)})
 
     ## This route is for creating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['PUT'])
@@ -416,12 +421,12 @@ def create_app(config_name):
             in: path
             type: integer
             description: E.g ID of the bucket
-            required: true         
+            required: true
          -  name: name
             in: formData
             description: The name of the bucket.
             type: string
-            required: true         
+            required: true
         responses:
             200:
                 description: Bucketlist updated successfully
@@ -429,20 +434,20 @@ def create_app(config_name):
         bucket = Buckets.query.get(id)
         if not bucket:
             return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
-        
+
         if request.method == 'PUT': ## Save bucket if the request is a post.
             name = str(request.args.get('name'))
             bucket.name  = name
             bucket.save()
-            
+
             results = {
                     'id': bucket.id,
                     'name': bucket.name,
                     'date_created': bucket.date_created,
-                    'success': True, 
+                    'success': True,
                     'msg': 'Bucket created successfully'}
 
-            return jsonify(results)        
+            return jsonify(results)
 
     ## This route is for creating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['GET'])
@@ -461,7 +466,7 @@ def create_app(config_name):
             in: path
             type: integer
             description: E.g ID of the bucket
-            required: true                         
+            required: true
         responses:
             200:
                 description: Get the Bucketlist
@@ -469,7 +474,7 @@ def create_app(config_name):
         bucket = Buckets.query.get(id)
         if not bucket:
             return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
-        
+
         if request.method == 'GET': ## Return all buckets if the requet if a GET.
             result = {
                 'id': bucket.id,
@@ -483,7 +488,7 @@ def create_app(config_name):
 
     ## This route is for creating a bucketlist item.
     @app.route('/bucketlists/<int:id>/items/', methods=['POST'])
-    def add_bucketlists_items(id, page=1):            
+    def add_bucketlists_items(id, page=1):
         """ Add Buckets Items.
         Please provide all the required fields.
         ---
@@ -493,22 +498,22 @@ def create_app(config_name):
          - "application/x-www-form-urlencoded"
         produces:
          - "application/json"
-        parameters:         
+        parameters:
          -  name: name
             in: formData
             type: string
             description: Name of the bucket item
-            required: true   
+            required: true
          -  name: description
             in: formData
             type: string
             description: Detail about the item
-            required: true    
+            required: true
          -  name: bucket_id
             in: formData
             type: integer
             description: The ID of the bucket
-            required: true          
+            required: true
         responses:
             200:
                 description: Bucket Item added successfully.
@@ -521,7 +526,7 @@ def create_app(config_name):
             if name and bucket_id:
                 bucketitem = Bucketitems(name, description, bucket_id)
                 bucketitem.save()
-                
+
                 result = {
                     'id': bucketitem.id,
                     'name': bucketitem.name,
@@ -530,11 +535,11 @@ def create_app(config_name):
                     'bucket_id': bucketitem.bucket_id
                 }
 
-                return jsonify(result)        
-    
+                return jsonify(result)
+
     ## This route is for getting bucketlist items.
     @app.route('/bucketlists/<int:id>/items/', methods=['GET'])
-    def get_bucketlists_items(id):            
+    def get_bucketlists_items(id):
         """ Get all Buckets Items.
         Please provide all the required fields.
         ---
@@ -549,7 +554,7 @@ def create_app(config_name):
             in: path
             type: integer
             description: ID of the Bucketlist
-            required: true    
+            required: true
          -  name: page
             in: formData
             type: integer
@@ -559,7 +564,7 @@ def create_app(config_name):
             in: formData
             type: integer
             description: Number of records/rows to return.
-            required: false                      
+            required: false
         responses:
             200:
                 description: All Bucket items.
@@ -579,7 +584,7 @@ def create_app(config_name):
 
             results = []
 
-            for bucketitem in bucketitems:                                        
+            for bucketitem in bucketitems:
                 obj = {
                     'id': bucketitem.id,
                     'name': bucketitem.name,
@@ -594,7 +599,7 @@ def create_app(config_name):
     ## This route is for creating a bucket.
     #@app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT', 'DELETE'])
     # @app.route('/bucketlists/<int:id>/items/', methods=['POST'])
-    # def bucketitems_id(id, item_id = None):  
+    # def bucketitems_id(id, item_id = None):
     #     """ Add Buckets.
     #     Please provide all the required fields.
     #     ---
@@ -609,11 +614,11 @@ def create_app(config_name):
     #         in: formData
     #         type: string
     #         description: E.g example@example.com
-    #         required: true         
+    #         required: true
     #      -  name: password
     #         in: formData
     #         type: string
-    #         required: true         
+    #         required: true
     #     responses:
     #         200:
     #             description: User password has been reset successfully
@@ -631,14 +636,14 @@ def create_app(config_name):
     #             'name': bucketitems.name,
     #             'description': bucketitems.description,
     #             'date_created': bucketitems.date_created,
-    #             'success': True, 
+    #             'success': True,
     #             'msg': 'Bucketitem created successfully'}
 
-    #         return jsonify(results)        
+    #         return jsonify(results)
 
         ## This route is for Updating a bucket.
     @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT'])
-    def update_bucketitems_id(id, item_id = None):  
+    def update_bucketitems_id(id, item_id = None):
         """ Edit Bucket.
         Please provide all the required fields.
         ---
@@ -651,20 +656,20 @@ def create_app(config_name):
         parameters:
          -  name: id
             in: path
-            type: integer            
-            required: true         
+            type: integer
+            required: true
          -  name: item_id
             in: path
             type: integer
-            required: true  
+            required: true
          -  name: name
             in: formData
-            type: string            
-            required: true         
+            type: string
+            required: true
          -  name: description
             in: formData
             type: string
-            required: true                 
+            required: true
         """
         if request.method == 'PUT': ## Save bucket if the request is a PUT.
             bucketitem = Bucketitems.query.get(item_id)
@@ -674,20 +679,20 @@ def create_app(config_name):
             bucketitem.name  = name
             bucketitem.description = description
             bucketitem.save()
-            
+
             results = {
                 'id': bucketitem.id,
                 'name': bucketitem.name,
                 'description': bucketitem.description,
                 'date_created': bucketitem.date_created,
-                'success': True, 
+                'success': True,
                 'msg': 'Bucketitem updated successfully'
                 }
 
-            return jsonify(results)    
+            return jsonify(results)
 
     @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['DELETE'])
-    def bucketitems_id(id, item_id = None):  
+    def bucketitems_id(id, item_id = None):
         """ Delete Bucket item.
         Please provide all the required fields.
         ---
@@ -700,19 +705,19 @@ def create_app(config_name):
         parameters:
          -  name: id
             in: path
-            type: integer            
-            required: true         
+            type: integer
+            required: true
          -  name: item_id
             in: path
             type: integer
-            required: true                 
+            required: true
         """
         if request.method == 'DELETE': ## Delete bucket if the request is a DELETE.
             bucketitem = Bucketitems.query.get(item_id)
             if not bucketitem:
                 return jsonify({'success': False, 'msg': 'Bucketlist item with id {} does not exist'.format(item_id)})
             bucketitem.delete()
-            
-            return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucketitem.id)})        
+
+            return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucketitem.id)})
 
     return app
