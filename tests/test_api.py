@@ -27,31 +27,36 @@ class ApiTestCase(unittest.TestCase):
             # create all tables
             db.create_all()
 
+    def test_index_page_loads(self):
+        """ This will test if the index page loads successfully. """
+        resp = self.client().post('/')
+        self.assertEqual(resp.status_code, 200) ## Check if the page successfully loads
+
     def test_account_create(self):
         """ Test user account registration using the POST request. """
         resp = self.client().post('/auth/register', data = self.user)
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.    
+        self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.
 
     def test_user_login(self):
         """ Test user login using the POST request. """
         form_data = {'username': 'chadwalt', 'password': '123'}
         resp = self.client().post('/auth/login', data = form_data)
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('false', str(resp.data)) ## Searches for chadwalt in the users string. 
+        self.assertIn('false', str(resp.data)) ## Searches for chadwalt in the users string.
 
     def test_user_logout(self):
         """ Test user logout using the POST request. """
         resp = self.client().post('/auth/logout')
         self.assertEqual(resp.status_code, 200)
         self.assertIn('false', str(resp.data))
-        
+
     def test_user_reset_password(self):
         """ Test user reset password using the POST request. """
 
         form_data = {'email': 'chadwalt@gmail.com', 'password': '2342'}
         resp = self.client().post('/auth/reset-password', data = form_data)
-        self.assertEqual(resp.status_code, 200)        
+        self.assertEqual(resp.status_code, 200)
 
     # def test_get_all_users(self):
     #     """ This will test get all the users using the GET request."""
@@ -229,7 +234,7 @@ class ApiTestCase(unittest.TestCase):
 
     def test_bucketitems_can_be_edited(self):
         """ Test if the bucketitems can be edited. Using the PUT request. """
-        
+
         resp = self.client().post('/auth/register', data = self.user)
         resp = self.client().post('/bucketlists/', data = self.bucket)
         resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems) ## Create the item.
