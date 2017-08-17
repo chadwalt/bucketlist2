@@ -34,7 +34,7 @@ def create_app(config_name):
     CORS(app) ## Enable Cross Site Origin.
     app.config['CORS_HEADERS'] = 'Content-Type'
 
-    @app.route('/')
+    @app.route('/', methods=['POST', 'GET'])
     def index():
         """ Home page (Documentation Page.)
         This page has the Documentation for the API... Using the flassger documentation
