@@ -30,12 +30,15 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
-        
+
     CORS(app) ## Enable Cross Site Origin.
     app.config['CORS_HEADERS'] = 'Content-Type'
 
     @app.route('/')
     def index():
+        """ Home page (Documentation Page.)
+        This page has the Documentation for the API... Using the flassger documentation
+        """
         return render_template("index.html")
 
     ## This route is for registering a user.
