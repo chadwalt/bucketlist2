@@ -38,6 +38,20 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.
 
+    def test_register_empty_fields(self):
+        """ Test if the required fields are field. """
+
+        user = {'first_name': 'Timothy',
+            'sur_name' : '',
+            'username': 'chadwalt',
+            'password': '',
+            'email': 'chadwalt@outlook.com'}
+
+        resp = self.client().post('/auth/register', data = user)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('false', str(resp.data)) ## Searches for kyadondo in the users string.
+
+
     def test_user_login(self):
         """ Test user login using the POST request. """
         form_data = {'username': 'chadwalt', 'password': '123'}
