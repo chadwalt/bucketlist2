@@ -605,52 +605,7 @@ def create_app(config_name):
 
             return jsonify(results);
 
-    ## This route is for creating a bucket.
-    #@app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT', 'DELETE'])
-    # @app.route('/bucketlists/<int:id>/items/', methods=['POST'])
-    # def bucketitems_id(id, item_id = None):
-    #     """ Add Buckets.
-    #     Please provide all the required fields.
-    #     ---
-    #     tags:
-    #      - Bucketlist
-    #     consumes:
-    #      - "application/x-www-form-urlencoded"
-    #     produces:
-    #      - "application/json"
-    #     parameters:
-    #      -  name: email
-    #         in: formData
-    #         type: string
-    #         description: E.g example@example.com
-    #         required: true
-    #      -  name: password
-    #         in: formData
-    #         type: string
-    #         required: true
-    #     responses:
-    #         200:
-    #             description: User password has been reset successfully
-    #     """
-    #     if request.method == 'POST':
-    #         name = str(request.form('name'))
-    #         description = str(request.form('description'))
-    #         bucket_id = int(request.form('bucket_id'))
-
-    #         bucketitems = Bucketitems(name, description, bucket_id)
-    #         bucketitems.save() ## Save the user.
-
-    #         results = {
-    #             'id': bucketitems.id,
-    #             'name': bucketitems.name,
-    #             'description': bucketitems.description,
-    #             'date_created': bucketitems.date_created,
-    #             'success': True,
-    #             'msg': 'Bucketitem created successfully'}
-
-    #         return jsonify(results)
-
-        ## This route is for Updating a bucket.
+    ## This route is for Updating a bucket.
     @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT'])
     def update_bucketitems_id(id, item_id = None):
         """ Edit Bucket.
