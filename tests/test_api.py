@@ -51,6 +51,16 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('false', str(resp.data)) ## Searches for kyadondo in the users string.
 
+    def test_user_already_exists(self):
+        """ Test if the user already exists. """
+
+        resp = self.client().post('/auth/register', data = self.user)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('true', str(resp.data))  ## Return false cause the account has already been created.
+
+        resp = self.client().post('/auth/register', data = self.user)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('false', str(resp.data))  ## Return false cause the account has already been created.
 
     def test_user_login(self):
         """ Test user login using the POST request. """
