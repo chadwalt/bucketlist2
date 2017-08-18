@@ -145,7 +145,9 @@ def create_app(config_name):
                 ## Get all the user.
                 user = Users.query.filter_by(username=username).first();
 
-                if user and user.password == password:
+                #if user and user.password == password:
+                ##if user.valid_password(password):
+                if user and user.valid_password(password):
                     auth_token = user.encode_auth_token(user.id)
                     if auth_token:
                         response_obj = {
