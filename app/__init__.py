@@ -255,14 +255,14 @@ def create_app(config_name):
             email = request.form['email']
             password = request.form['password']
 
-            ## Get the user with this email
-            user = Users.query.filter_by(email=email).first()
-
-            if not user:
-                #abort(404) ## Raise the not found status.
-                return jsonify({'success': False, 'msg': 'User with the specified email does not exist.'})
-
             if email and password:
+                ## Get the user with this email
+                user = Users.query.filter_by(email=email).first()
+
+                if not user:
+                    #abort(404) ## Raise the not found status.
+                    return jsonify({'success': False, 'msg': 'User with the specified email does not exist.'})
+
                 user.password = password
                 user.save()
                 return jsonify({'success': True, 'msg': 'User Password reset successfully'})
