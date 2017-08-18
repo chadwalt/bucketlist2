@@ -135,9 +135,16 @@ class ApiTestCase(unittest.TestCase):
     def test_bucket_creation(self):
         """ Test Buckets creation using the POST request. """
         resp = self.client().post('/auth/register', data = self.user) ## Creating an account.
-        resp = self.client().post('/bucketlists/', data = self.bucket)
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn('Climbing', str(resp.data)) ## Searches for climbing.
+
+        form_data = {'username': 'chadwalt', 'password': '123'}
+        resp_login = self.client().post('/auth/login', data = form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp_bucket = self.client().post('/bucketlists/',
+        headers=dict(Authorization="Bearer " + token), data = self.bucket) ## Place the token in the header.
+
+        self.assertEqual(resp_bucket.status_code, 200)
+        self.assertIn('Climbing', str(resp_bucket.data)) ## Searches for climbing.
 
     def test_get_all_buckets(self):
         """ This will test get all the buckets using the GET request."""
