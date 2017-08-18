@@ -52,7 +52,7 @@ class ApiTestCase(unittest.TestCase):
         self.assertIn('false', str(resp.data)) ## Searches for kyadondo in the users string.
 
     def test_user_already_exists(self):
-        """ Test if the user already exists. """
+        """ Test if the user already exists. (Registration)"""
 
         resp = self.client().post('/auth/register', data = self.user)
         self.assertEqual(resp.status_code, 200)
@@ -64,7 +64,32 @@ class ApiTestCase(unittest.TestCase):
 
     def test_user_login(self):
         """ Test user login using the POST request. """
+
+        resp = self.client().post('/auth/register', data = self.user) ## First register the user.
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('true', str(resp.data))  ## Return false cause the account has already been created.
+
         form_data = {'username': 'chadwalt', 'password': '123'}
+        resp = self.client().post('/auth/login', data = form_data) ## Check if the user login details are valid.
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('true', str(resp.data)) ## Searches for chadwalt in the users string.
+
+    def test_user_not_exist(self):
+        """ Test is the user exists.. """
+
+        resp = self.client().post('/auth/register', data = self.user) ## First create the user.
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.
+
+        form_data = {'username': 'chadtims', 'password': '123'}
+        resp = self.client().post('/auth/login', data = form_data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('false', str(resp.data)) ## Now check if the user exists.
+
+    def test_login_empty_fields(self):
+        """ Test user login using the POST request. """
+
+        form_data = {'username': 'chadwalt', 'password': ''}
         resp = self.client().post('/auth/login', data = form_data)
         self.assertEqual(resp.status_code, 200)
         self.assertIn('false', str(resp.data)) ## Searches for chadwalt in the users string.
@@ -78,73 +103,34 @@ class ApiTestCase(unittest.TestCase):
     def test_user_reset_password(self):
         """ Test user reset password using the POST request. """
 
+        resp = self.client().post('/auth/register', data = self.user) ## First create the user.
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('true', str(resp.data))
+
+        form_data = {'email': 'chadwalt@outlook.com', 'password': '2342'}
+        resp = self.client().post('/auth/reset-password', data = form_data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('true', str(resp.data))
+
+    def test_user_reset_password_validate_email(self):
+        """ Test if the user with the specified email exists.. """
+
+        resp = self.client().post('/auth/register', data = self.user) ## First create the user.
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('true', str(resp.data))
+
         form_data = {'email': 'chadwalt@gmail.com', 'password': '2342'}
         resp = self.client().post('/auth/reset-password', data = form_data)
         self.assertEqual(resp.status_code, 200)
+        self.assertIn('false', str(resp.data))
 
-    # def test_get_all_users(self):
-    #     """ This will test get all the users using the GET request."""
-    #     resp = self.client().post('/user', data = self.user)
-    #     self.assertEqual(resp.status_code, 200)
+    def test_user_reset_password_required_fields(self):
+        """ Test if all the required fields have been specified """
 
-    #     resp = self.client().get('/users')
-    #     self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
-    #     self.assertIn('kyadondo', str(resp.data))
-
-    # def test_get_user_by_id(self):
-    #     """ This will test if the user can be gotten by the id. """
-    #     resp = self.client().post('/user', data = self.user)
-    #     self.assertEqual(resp.status_code, 201)
-
-    #     json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
-    #     result = self.client().get('/users/{}'.format(json_result['id']))
-    #     self.assertEqual(result.status_code, 200)
-    #     self.assertIn('kyadondo', str(resp.data))
-
-    # def test_user_can_be_edited(self):
-    #     """ Test if the user can be edited. Using the PUT request. """
-
-    #     resp = self.client().post('/users/', self.user)
-    #     self.assertEqual(resp.status_code, 201)
-
-    #     data = {"first_name": "Waltor"}
-    #     update = self.client().put('/users/1', data)
-    #     results = self.client().get('/users/1')
-    #     self.assertIn('Waltor', str(results.data))
-
-    # def test_user_deletion(self):
-    #     """ Test if the user can be deleted. """
-    #     resp = self.client().post('/users/', self.user)
-    #     self.assertEqual(resp.status_code, 201)
-
-    #     result = self.client().delete('/users/1')
-    #     self.assertEqual(result.status_code, 200)
-
-    #     ## Then test if the user exists. should return 404
-    #     res = self.client().get('/users/1')
-    #     self.assertEqual(res.status_code, 404)
-
-    # def tearDown(self):
-    #     """teardown all initialized variables."""
-    #     with self.app.app_context():
-    #         # drop all tables
-    #         db.session.remove()
-    #         db.drop_all()
-
-# """ This will test the bucketlist """
-# class BucketTestCase(unittest.TestCase):
-    ## Set it up.
-    # def setUp(self):
-    #     ## Defining test variables and initialize the appliction.
-
-    #     self.app = create_app(config_name='testing');
-    #     self.client = self.app.test_client
-    #     self.bucket = {'name': 'Climbing', 'user_id': '1'}
-
-        ## Binds the app to the current context.
-        # with self.app.app_context():
-            # create all tables
-            # db.create_all()
+        form_data = {'email': '', 'password': '2342'}
+        resp = self.client().post('/auth/reset-password', data = form_data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('false', str(resp.data))
 
     def test_bucket_creation(self):
         """ Test Buckets creation using the POST request. """
