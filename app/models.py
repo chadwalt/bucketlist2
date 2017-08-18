@@ -59,7 +59,7 @@ class Users(db.Model):
         """ Generates the Auth Token :return: string """
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=300), ## Expire after 5 hrs.
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }
