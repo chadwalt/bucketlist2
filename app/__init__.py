@@ -96,12 +96,9 @@ def create_app(config_name):
                     user = Users(first_name, sur_name, username, password, email)
                     user.save() ## Save the user.
 
-                    ## Now generate the auth token.
-                    auth_token = user.encode_auth_token(user.id)
                     response_obj = {
                         'success': True,
-                        'msg': 'User created successfully',
-                        'auth_token': auth_token
+                        'msg': 'User created successfully'
                     }
 
                     return jsonify(response_obj)
@@ -298,9 +295,17 @@ def create_app(config_name):
                 description: Bucket added successfully
         """
         if request.method == 'POST': ## Save bucket if the request is a post.
-            name = request.form['name']
-            user_id = request.form['user_id']
+            ## Get the authentication token from the header.
+            token = request.headers['Authorization']
 
+            if token:
+                ## Decode the token to get the user_id
+                user_id = Users.decode_auth_token(token)
+                if isinstance(user_id, str):
+                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
+            name = request.form['name']
+            
             # Check if the bucket exists.
             bucket_exists = Buckets.query.filter_by(name=name).first()
             if bucket_exists:
