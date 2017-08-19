@@ -185,10 +185,11 @@ def create_app(config_name):
             200:
                 description: User has been logged out successfully
         """
+
         # get auth token
-        auth_header = request.headers.get('Authorization')
+        auth_header = request.headers['Authorization']
         if auth_header:
-            auth_token = auth_header.split(" ")[1]
+            auth_token = auth_header
         else:
             auth_token = ''
         if auth_token:
@@ -251,6 +252,15 @@ def create_app(config_name):
                 description: User password has been reset successfully
         """
         if request.method == 'POST':
+            ## Get the authentication token from the header.
+            token = request.headers['Authorization']
+
+            if token:
+                ## Decode the token to get the user_id
+                user_id = Users.decode_auth_token(token)
+                if isinstance(user_id, str):
+                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
             email = request.form['email']
             password = request.form['password']
 
@@ -305,7 +315,7 @@ def create_app(config_name):
                     return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
 
             name = request.form['name']
-            
+
             # Check if the bucket exists.
             bucket_exists = Buckets.query.filter_by(name=name).first()
             if bucket_exists:
@@ -360,7 +370,17 @@ def create_app(config_name):
                 description: All buckets.
         """
         if request.method == 'GET': ## Return all buckets if the requet if a GET.
-            user_id = int(request.args.get('user_id'))
+
+            ## Get the authentication token from the header.
+            token = request.headers['Authorization']
+
+            if token:
+                ## Decode the token to get the user_id
+                user_id = Users.decode_auth_token(token)
+                if isinstance(user_id, str):
+                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
+            #user_id = int(request.args.get('user_id'))
             search = str(request.args.get('q'))
             page = int(request.args.get('page'))
             rows = int(request.args.get('rows'))
@@ -410,6 +430,15 @@ def create_app(config_name):
             200:
                 description: Bucketlist deleted successfully
         """
+        ## Get the authentication token from the header.
+        token = request.headers['Authorization']
+
+        if token:
+            ## Decode the token to get the user_id
+            user_id = Users.decode_auth_token(token)
+            if isinstance(user_id, str):
+                return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
         bucket = Buckets.query.get(id)
         if not bucket:
             return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
@@ -447,6 +476,15 @@ def create_app(config_name):
             200:
                 description: Bucketlist updated successfully
         """
+        ## Get the authentication token from the header.
+        token = request.headers['Authorization']
+
+        if token:
+            ## Decode the token to get the user_id
+            user_id = Users.decode_auth_token(token)
+            if isinstance(user_id, str):
+                return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
         bucket = Buckets.query.get(id)
         if not bucket:
             return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
@@ -487,6 +525,15 @@ def create_app(config_name):
             200:
                 description: Get the Bucketlist
         """
+        ## Get the authentication token from the header.
+        token = request.headers['Authorization']
+
+        if token:
+            ## Decode the token to get the user_id
+            user_id = Users.decode_auth_token(token)
+            if isinstance(user_id, str):
+                return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
         bucket = Buckets.query.get(id)
         if not bucket:
             return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
@@ -535,6 +582,15 @@ def create_app(config_name):
                 description: Bucket Item added successfully.
         """
         if request.method == 'POST': ## Add bucket items if the request is a POST.
+            ## Get the authentication token from the header.
+            token = request.headers['Authorization']
+
+            if token:
+                ## Decode the token to get the user_id
+                user_id = Users.decode_auth_token(token)
+                if isinstance(user_id, str):
+                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
             name = request.form['name']
             description = request.form['description']
             bucket_id = request.form['bucket_id']
@@ -586,6 +642,15 @@ def create_app(config_name):
                 description: All Bucket items.
         """
         if request.method == 'GET': ## Get bueckt items if the request if a GET
+            ## Get the authentication token from the header.
+            token = request.headers['Authorization']
+
+            if token:
+                ## Decode the token to get the user_id
+                user_id = Users.decode_auth_token(token)
+                if isinstance(user_id, str):
+                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
             if not request.args.get('page'):
                 page = 1
             else:
@@ -643,6 +708,15 @@ def create_app(config_name):
             required: true
         """
         if request.method == 'PUT': ## Save bucket if the request is a PUT.
+            ## Get the authentication token from the header.
+            token = request.headers['Authorization']
+
+            if token:
+                ## Decode the token to get the user_id
+                user_id = Users.decode_auth_token(token)
+                if isinstance(user_id, str):
+                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
             bucketitem = Bucketitems.query.get(item_id)
             name = str(request.form['name'])
             description = str(request.form['description'])
@@ -684,6 +758,15 @@ def create_app(config_name):
             required: true
         """
         if request.method == 'DELETE': ## Delete bucket if the request is a DELETE.
+            ## Get the authentication token from the header.
+            token = request.headers['Authorization']
+
+            if token:
+                ## Decode the token to get the user_id
+                user_id = Users.decode_auth_token(token)
+                if isinstance(user_id, str):
+                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+
             bucketitem = Bucketitems.query.get(item_id)
             if not bucketitem:
                 return jsonify({'success': False, 'msg': 'Bucketlist item with id {} does not exist'.format(item_id)})
