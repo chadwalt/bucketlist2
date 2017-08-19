@@ -238,6 +238,11 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
+            required: true
          -  name: email
             in: formData
             type: string
@@ -291,15 +296,16 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
+            required: true
          -  name: name
             in: formData
             type: string
             description: E.g Climbing the Mountain
-            required: true
-         -  name: user_id
-            in: formData
-            type: integer
-            required: true
+            required: true         
         responses:
             200:
                 description: Bucket added successfully
@@ -349,9 +355,10 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
-         -  name: user_id
-            in: formData
-            type: integer
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
             required: true
          -  name: q
             in: formData
@@ -421,6 +428,11 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
+            required: true
          -  name: id
             in: path
             type: integer
@@ -462,6 +474,11 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
+            required: true
          -  name: id
             in: path
             type: integer
@@ -516,6 +533,11 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
+            required: true
          -  name: id
             in: path
             type: integer
@@ -562,6 +584,11 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
+            required: true
          -  name: name
             in: formData
             type: string
@@ -622,6 +649,11 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
+            required: true
          -  name: id
             in: path
             type: integer
@@ -690,6 +722,11 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
+            required: true
          -  name: id
             in: path
             type: integer
@@ -748,6 +785,11 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
+         -  name: Authorization
+            in: header
+            type: string
+            description: Auth Token
+            required: true
          -  name: id
             in: path
             type: integer
