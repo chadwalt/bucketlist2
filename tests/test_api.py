@@ -98,9 +98,14 @@ class ApiTestCase(unittest.TestCase):
 
     def test_user_logout(self):
         """ Test user logout using the POST request. """
-        resp = self.client().post('/auth/logout')
+        resp = self.client().post('/auth/register', data = self.user) ## Creating an account.
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().post('/auth/logout',headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('false', str(resp.data))
+        self.assertIn('true', str(resp.data))
 
     def test_user_reset_password(self):
         """ Test user reset password using the POST request. """
@@ -109,8 +114,11 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('true', str(resp.data))
 
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
         form_data = {'email': 'chadwalt@outlook.com', 'password': '2342'}
-        resp = self.client().post('/auth/reset-password', data = form_data)
+        resp = self.client().post('/auth/reset-password', data = form_data, headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200)
         self.assertIn('true', str(resp.data))
 
@@ -121,16 +129,24 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('true', str(resp.data))
 
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
         form_data = {'email': 'chadwalt@gmail.com', 'password': '2342'}
-        resp = self.client().post('/auth/reset-password', data = form_data)
+        resp = self.client().post('/auth/reset-password', data = form_data, headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200)
         self.assertIn('false', str(resp.data))
 
     def test_user_reset_password_required_fields(self):
         """ Test if all the required fields have been specified """
 
+        resp = self.client().post('/auth/register', data = self.user) ## Creating an account.
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
         form_data = {'email': '', 'password': '2342'}
-        resp = self.client().post('/auth/reset-password', data = form_data)
+        resp = self.client().post('/auth/reset-password', data = form_data, headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200)
         self.assertIn('false', str(resp.data))
 
