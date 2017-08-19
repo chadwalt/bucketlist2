@@ -21,6 +21,8 @@ class ApiTestCase(unittest.TestCase):
         self.user = {'first_name': 'Timothy', 'sur_name' : 'Kyadondo', 'username': 'chadwalt', 'password': '123', 'email': 'chadwalt@outlook.com'}
         self.bucketitems = {'name': 'Climbing More', 'description': 'Touching the clouds', 'bucket_id': '1'}
         self.bucket = {'name': 'Climbing', 'user_id': '1'}
+        self.headers = {'Authorization': 'this is authozized.'}
+        self.form_data = {'username': 'chadwalt', 'password': '123'}
 
         ## Binds the app to the current context.
         with self.app.app_context():
@@ -136,12 +138,16 @@ class ApiTestCase(unittest.TestCase):
         """ Test Buckets creation using the POST request. """
         resp = self.client().post('/auth/register', data = self.user) ## Creating an account.
 
-        form_data = {'username': 'chadwalt', 'password': '123'}
-        resp_login = self.client().post('/auth/login', data = form_data) ## Login the user.
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
         token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
 
-        resp_bucket = self.client().post('/bucketlists/',
-        headers=dict(Authorization="Bearer " + token), data = self.bucket) ## Place the token in the header.
+        resp_bucket = self.client().post('/bucketlists/', data = self.bucket,
+        headers=dict(Authorization=token)) ## Place the token in the header.
+
+        # res = self.client().post(
+        #     '/bucketlists/',
+        #     HTTP_AUTHORIZATION="access_token",
+        #     data=self.bucketlist)
 
         self.assertEqual(resp_bucket.status_code, 200)
         self.assertIn('Climbing', str(resp_bucket.data)) ## Searches for climbing.
@@ -149,14 +155,18 @@ class ApiTestCase(unittest.TestCase):
     def test_get_all_buckets(self):
         """ This will test get all the buckets using the GET request."""
         resp = self.client().post('/auth/register', data = self.user)
-        self.client().post('/bucketlists/', data = self.bucket)
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token))
 
         form_obj = {
             'user_id': '1',
             'page': '1',
             'rows': '20'
         }
-        resp = self.client().get('/bucketlists/', query_string = form_obj)
+        resp = self.client().get('/bucketlists/', query_string = form_obj, headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
         self.assertIn('Climbing', str(resp.data))
 
@@ -164,11 +174,15 @@ class ApiTestCase(unittest.TestCase):
         """ This will test if the bucket can be gotten by the id. """
 
         resp = self.client().post('/auth/register', data = self.user)
-        resp = self.client().post('/bucketlists/', data = self.bucket) ## Save a bucket.
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Save a bucket.
         self.assertEqual(resp.status_code, 200)
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
 
-        result = self.client().get('/bucketlists/{}'.format(json_result.get('id')))
+        result = self.client().get('/bucketlists/{}'.format(json_result.get('id')), headers=dict(Authorization=token))
         self.assertEqual(result.status_code, 200)
         self.assertIn('Climbing', str(resp.data))
 
@@ -176,23 +190,31 @@ class ApiTestCase(unittest.TestCase):
         """ Test if the bucket can be edited. Using the PUT request. """
 
         resp = self.client().post('/auth/register', data = self.user)
-        resp = self.client().post('/bucketlists/', data = self.bucket)
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token))
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(resp.status_code, 200)
 
         data = {"name": "Mountain Climbing"}
-        results = self.client().put('/bucketlists/{}'.format(json_result.get('id')), data = data)
+        results = self.client().put('/bucketlists/{}'.format(json_result.get('id')), data = data, headers=dict(Authorization=token))
         self.assertIn('true', str(results.data))
 
     def test_bucket_deletion(self):
         """ Test if the bucket can be deleted. """
         resp = self.client().post('/auth/register', data = self.user) ## Creating a user
-        resp = self.client().post('/bucketlists/', data = self.bucket) ## Creating a bucket.
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Creating a bucket.
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(resp.status_code, 200)
 
         ## Then test if the user exists. should return 404
-        res = self.client().delete('/bucketlists/{}'.format(json_result.get('id')))
+        res = self.client().delete('/bucketlists/{}'.format(json_result.get('id')), headers=dict(Authorization=token))
         self.assertEqual(res.status_code, 200)
 
     # def tearDown(self):
@@ -222,8 +244,12 @@ class ApiTestCase(unittest.TestCase):
         """ Test Bucketitems creation using the POST request. """
 
         resp = self.client().post('/auth/register', data = self.user)
-        resp = self.client().post('/bucketlists/', data = self.bucket)
-        resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems)
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token))
+        resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems, headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200)
         self.assertIn('Climbing', str(resp.data)) ## Searches for climbing in the users string.
 
@@ -231,11 +257,15 @@ class ApiTestCase(unittest.TestCase):
         """ This will test get all the bucketitems using the GET request."""
 
         resp = self.client().post('/auth/register', data = self.user)
-        resp = self.client().post('/bucketlists/', data = self.bucket)
-        resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems)
+
+        resp_login = self.client().post('/auth/login', data = self.form_data, ) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token))
+        resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems, headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200)
 
-        resp = self.client().get('/bucketlists/1/items/')
+        resp = self.client().get('/bucketlists/1/items/', headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200) ## Test if the response is successfully loaded.
         self.assertIn('Climbing', str(resp.data))
 
@@ -253,18 +283,28 @@ class ApiTestCase(unittest.TestCase):
         """ Test if the bucketitems can be edited. Using the PUT request. """
 
         resp = self.client().post('/auth/register', data = self.user)
-        resp = self.client().post('/bucketlists/', data = self.bucket)
-        resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems) ## Create the item.
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token))
+        resp = self.client().post('/bucketlists/1/items/', data = self.bucketitems, headers=dict(Authorization=token)) ## Create the item.
 
         form_data = {'name': 'walking on the moon', 'description': 'Go by the space craft'}
-        resp = self.client().put('/bucketlists/1/items/1', data = form_data)
+        resp = self.client().put('/bucketlists/1/items/1', data = form_data, headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200)
 
         self.assertIn('true', str(resp.data))
 
     def test_bucketitems_deletion(self):
         """ Test if the bucketitems can be deleted. """
-        resp = self.client().delete('/bucketlists/1/items/1')
+
+        resp = self.client().post('/auth/register', data = self.user) ## Creating an account.
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().delete('/bucketlists/1/items/1', headers=dict(Authorization=token))
         self.assertEqual(resp.status_code, 200)
 
     def tearDown(self):
