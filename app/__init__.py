@@ -176,7 +176,7 @@ def create_app(config_name):
         produces:
          - "application/json"
         parameters:
-         -  name: token
+         -  name: Authorization
             in: header
             type: string
             description: Auth Token
