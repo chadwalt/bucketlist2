@@ -11,6 +11,8 @@ from instance.config import app_config, ITEMS_PER_PAGE
 
 from flask import request, jsonify, abort,render_template
 
+from flask_bcrypt import Bcrypt ## Import the encryption module for flask.
+
 ## Import flasgger for API documentation.
 from flasgger import Swagger
 
@@ -277,7 +279,8 @@ def create_app(config_name):
                     #abort(404) ## Raise the not found status.
                     return jsonify({'success': False, 'msg': 'User with the specified email does not exist.'})
 
-                user.password = password
+                #user.password = password
+                user.password = Bcrypt().generate_password_hash(password).decode()
                 user.save()
                 return jsonify({'success': True, 'msg': 'User Password reset successfully'})
             else:
@@ -305,7 +308,7 @@ def create_app(config_name):
             in: formData
             type: string
             description: E.g Climbing the Mountain
-            required: true         
+            required: true
         responses:
             200:
                 description: Bucket added successfully
@@ -380,7 +383,7 @@ def create_app(config_name):
 
             ## Get the authentication token from the header.
             token = request.headers['Authorization']
-
+            
             if token:
                 ## Decode the token to get the user_id
                 user_id = Users.decode_auth_token(token)
