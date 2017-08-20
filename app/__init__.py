@@ -353,8 +353,6 @@ def create_app(config_name):
         ---
         tags:
          - Bucketlist
-        consumes:
-         - "application/x-www-form-urlencoded"
         produces:
          - "application/json"
         parameters:
@@ -364,16 +362,16 @@ def create_app(config_name):
             description: Auth Token
             required: true
          -  name: q
-            in: formData
+            in: query
             type: string
             required: false
          -  name: page
-            in: formData
+            in: query
             type: integer
             required: true
             default: 1
          -  name: rows
-            in: formData
+            in: query
             type: integer
             required: true
             default: 10
