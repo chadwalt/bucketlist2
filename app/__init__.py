@@ -734,18 +734,22 @@ def create_app(config_name):
             in: path
             type: integer
             required: true
+            description: The ID of the bucket
          -  name: item_id
             in: path
             type: integer
             required: true
+            description: The ID of the bucketlist item
          -  name: name
             in: formData
             type: string
             required: true
+            description: The name of the bucketlist item
          -  name: description
             in: formData
             type: string
             required: true
+            description: A breif description of the bucketlist item.
         """
         if request.method == 'PUT': ## Save bucket if the request is a PUT.
             ## Get the authentication token from the header.
