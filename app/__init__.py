@@ -663,12 +663,12 @@ def create_app(config_name):
             description: ID of the Bucketlist
             required: true
          -  name: page
-            in: formData
+            in: query
             type: integer
             description: The page to view
             required: false
          -  name: rows
-            in: formData
+            in: query
             type: integer
             description: Number of records/rows to return.
             required: false
@@ -691,7 +691,10 @@ def create_app(config_name):
             else:
                 page = int(request.args.get('page'))
 
-            rows = ITEMS_PER_PAGE
+            if not request.args.get('rows'):
+                rows = ITEMS_PER_PAGE
+            else:
+                rows = int(request.args.get('rows'))
 
             bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, rows, False).items
 
