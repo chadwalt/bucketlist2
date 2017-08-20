@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <title>BucketList API</title>
+    </head>
+
+    <body>
+        <h1>Bucketlist API</h1>
+
+        <p>This is an api, which you provide data to, to store things you want to do before you die.</p>
+
+        <h3>How to install the API.</h3>
+
+        <p>
+            Go to <a href='https://github.com/chadwalt/bucketlist2'>[GitHub: Bucketlist2]</a> and clone the Repository
+            Navigate to the installation folder or create a directory if you have not created one yet, like
+        </p>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ mkdir bucketlist_api
+        </code>
+
+        <p>Move to the created directory</p>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ cd bucketlist_api
+        </code>
+            
+        <p>Now clone the repository.</p>
+
+        <p>
+            git clone https://github.com/chadwalt/bucketlist2 <br>            
+            Make sure you have the lastest python installed. <a href="https://www.python.org/downloads/"> Python Org</a> <br>
+            Download and install Postgressql if you dont have it. <a href="https://www.postgresql.org/download/"> Postgressql </a>
+        </p>
+
+        <h3>Now Setup Virtual Environment</h3>
+
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ pip install virtualenv
+        </code>
+
+        <br>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ pip install virtualenvwrapper 
+        </code>
+
+        <br>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ export WORKHOME=~/Envs
+        </code>
+
+        <br>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ source /usr/local/bin/virtualenvwrapper.sh
+        </code>
+
+        <br>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ mkvirtualenv bucketlistapi
+        </code>
+
+        <h4>Install the requirements</h4>
+        <code style="font-weight:bold;font-style:italic;">
+            $ pip install requirements.txt
+        </code>
+
+        <h4>Provide the flask application environment variable</h4>
+
+        <code style="font-weight:bold;font-style:italic;">
+            $ export FLASK_APP=run.py
+        </code>
+
+        <h4>Run the flask server</h4>
+        <code style="font-weight:bold;font-style:italic;">
+            $ flask run 
+        </code>
+
+        <br>
+
+        <p>
+            Find the documentation here <a href="apidocs/"> API Documentation</a>
+        </p>
+    </body>
+</html>
