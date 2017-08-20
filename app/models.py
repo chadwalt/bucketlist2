@@ -10,6 +10,8 @@ import jwt
 
 import os
 
+from flask_bcrypt import Bcrypt ## Import the encryption module for flask.
+
 ## This is for creating the users.
 class Users(db.Model):
     """ This class represents the users table. """
@@ -29,13 +31,19 @@ class Users(db.Model):
         self.first_name = first_name
         self.sur_name = sur_name
         self.username = username
-        self.password = password
+        self.password = Bcrypt().generate_password_hash(password).decode()
         self.email = email
-    
+
     ## Save the user.
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    ## Check for password validity.
+    def valid_password(self, password):
+        """ Checks if the password provided matches the one in the database. """
+
+        return Bcrypt().check_password_hash(self.password, password)
 
     ## Get all the users.
     @staticmethod
@@ -51,7 +59,7 @@ class Users(db.Model):
         """ Generates the Auth Token :return: string """
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=300), ## Expire after 5 hrs.
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }
@@ -136,7 +144,7 @@ class Bucketitems(db.Model):
         self.name = name
         self.description = description
         #self.date_created = date_created
-        self.bucket_id = bucket_id        
+        self.bucket_id = bucket_id
 
     ## Save the bucket.
     def save(self):
