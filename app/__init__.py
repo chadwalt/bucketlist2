@@ -464,10 +464,10 @@ def create_app(config_name):
 
             return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucket.id)})
 
-    ## This route is for creating a bucket.
+    ## This route is for Editing or Updating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['PUT'])
     def update_bucketlists_id(id):
-        """ Update Bucketlist.
+        """ Update/Edit Bucketlist.
         Please provide all the required fields.
         ---
         tags:
@@ -510,7 +510,7 @@ def create_app(config_name):
             return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
 
         if request.method == 'PUT': ## Save bucket if the request is a post.
-            name = str(request.args.get('name'))
+            name = str(request.form.get('name'))
             bucket.name  = name
             bucket.save()
 
@@ -519,7 +519,7 @@ def create_app(config_name):
                     'name': bucket.name,
                     'date_created': bucket.date_created,
                     'success': True,
-                    'msg': 'Bucket created successfully'}
+                    'msg': 'Bucket updated successfully'}
 
             return jsonify(results)
 
