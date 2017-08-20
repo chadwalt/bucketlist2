@@ -370,11 +370,13 @@ def create_app(config_name):
          -  name: page
             in: formData
             type: integer
-            required: false
+            required: true
+            default: 1
          -  name: rows
             in: formData
             type: integer
-            required: false
+            required: true
+            default: 10
         responses:
             200:
                 description: All buckets.
@@ -383,7 +385,7 @@ def create_app(config_name):
 
             ## Get the authentication token from the header.
             token = request.headers['Authorization']
-            
+
             if token:
                 ## Decode the token to get the user_id
                 user_id = Users.decode_auth_token(token)
