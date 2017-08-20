@@ -523,7 +523,7 @@ def create_app(config_name):
 
             return jsonify(results)
 
-    ## This route is for creating a bucket.
+    ## This route is for Getting a bucket.
     @app.route('/bucketlists/<int:id>', methods=['GET'])
     def bucketlists_id(id):
         """ Get Bucketlist.
@@ -576,7 +576,7 @@ def create_app(config_name):
 
     ## This route is for creating a bucketlist item.
     @app.route('/bucketlists/<int:id>/items/', methods=['POST'])
-    def add_bucketlists_items(id, page=1):
+    def add_bucketlists_items(id):
         """ Add Buckets Items.
         Please provide all the required fields.
         ---
@@ -592,6 +592,11 @@ def create_app(config_name):
             type: string
             description: Auth Token
             required: true
+         -  name: id
+            in: path
+            type: integer
+            description: E.g ID of the bucket
+            required: true
          -  name: name
             in: formData
             type: string
@@ -601,11 +606,6 @@ def create_app(config_name):
             in: formData
             type: string
             description: Detail about the item
-            required: true
-         -  name: bucket_id
-            in: formData
-            type: integer
-            description: The ID of the bucket
             required: true
         responses:
             200:
@@ -623,7 +623,7 @@ def create_app(config_name):
 
             name = request.form['name']
             description = request.form['description']
-            bucket_id = request.form['bucket_id']
+            bucket_id = id
 
             if name and bucket_id:
                 bucketitem = Bucketitems(name, description, bucket_id)
