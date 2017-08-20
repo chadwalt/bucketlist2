@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/chadwalt/bucketlist2.svg?branch=master)](https://travis-ci.org/chadwalt/bucketlist2) [![Coverage Status](https://coveralls.io/repos/github/chadwalt/bucketlist2/badge.svg?branch=master)](https://coveralls.io/github/chadwalt/bucketlist2?branch=master)
 
-This is an api, which you provide data to, to store things you want to do before you die.
+This is an api, which you provide data to, to store things you want to do before you die..
 
 ### How to install the API.
 
