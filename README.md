@@ -26,9 +26,9 @@ Now clone the repository.
 git clone https://github.com/chadwalt/bucketlist2
 ```
 
-Make sure you have the lastest python installed. [Python.org](https://www.python.org/downloads/")
+Make sure you have the lastest python installed. [Python.org](https://www.python.org/downloads/)
 
-Download and install Postgressql if you dont have it. [Postgresql](https://www.postgresql.org/download/")
+Download and install Postgressql if you dont have it. [Postgresql](https://www.postgresql.org/download/)
 
 ### Now Setup Virtual Environment
 
@@ -74,4 +74,4 @@ $ export FLASK_APP=run.py
 $ flask run
 ```
 
-View the API Documentation on Heroku. [API Documentation](https://mybucketlist-api.herokuapp.com/apidocs/") 
+View the API Documentation on Heroku. [API Documentation](https://mybucketlist-api.herokuapp.com/apidocs/)
