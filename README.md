@@ -12,24 +12,6 @@ Go to [GitHub: Bucketlist2](https://github.com/chadwalt/bucketlist2 "Buketlist2"
 git clone https://github.com/chadwalt/bucketlist2
 ```
 
-Navigate to the installation folder or create a directory if you have not created one yet, like
-
-```
-mkdir bucketlist_api
-```
-
-Move to the created directory
-
-```
-$ cd bucketlist_api
-```
-
-Now clone the repository.
-
-```
-git clone https://github.com/chadwalt/bucketlist2
-```
-
 Make sure you have the lastest python installed. [Python.org](https://www.python.org/downloads/)
 
 Download and install Postgressql if you dont have it. [Postgresql](https://www.postgresql.org/download/)
@@ -75,6 +57,13 @@ $ pip install -r requirements.txt
 ```
 createdb bucketlist
 createdb test_db
+```
+
+**Make the migrations for the database.**
+```
+python manage.py db init
+python manage.py db migrate
+python manage.py db upgrade
 ```
 
 ### Run the flask server

@@ -104,3 +104,6 @@ bin/
 # python files.
 lib64
 pyvenv.cfg
+
+#Migrations
+migrations/
