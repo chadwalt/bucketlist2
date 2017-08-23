@@ -6,7 +6,11 @@ This is an Bucketlist API, which you provide data to, to store things you want t
 
 ### How to install the API.
 
-Go to [GitHub: Bucketlist2](https://github.com/chadwalt/bucketlist2 "Buketlist2") and clone the Repository
+Go to [GitHub: Bucketlist2](https://github.com/chadwalt/bucketlist2 "Buketlist2") and clone the Repository make sure you have git installed.
+
+```
+git clone https://github.com/chadwalt/bucketlist2
+```
 
 Navigate to the installation folder or create a directory if you have not created one yet, like
 
