@@ -36,12 +36,18 @@ def create_app(config_name):
     CORS(app) ## Enable Cross Site Origin.
     app.config['CORS_HEADERS'] = 'Content-Type'
 
+    ## This will handle the index route.
     @app.route('/', methods=['POST', 'GET'])
     def index():
         """ Home page (Documentation Page.)
         This page has the Documentation for the API... Using the flassger documentation
         """
         return render_template("index.html")
+
+    ## This will handle the routes if he route does not exist, it will return the 404 errors.
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return jsonify({'error': 'Page not found.'}), 404
 
     ## This route is for registering a user.
     @app.route('/auth/register', methods=['POST'])
