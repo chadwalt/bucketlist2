@@ -6,6 +6,7 @@ import unittest
 import os
 import json
 import sys
+import re
 topdir = os.path.join(os.path.dirname(__file__), "..")
 sys.path.append(topdir)
 
@@ -31,6 +32,20 @@ class AuthTestCase(unittest.TestCase):
         """ This will test if the index page loads successfully. """
         resp = self.client().post('/')
         self.assertEqual(resp.status_code, 200) ## Check if the page successfully loads
+
+    def test_valid_inputs(self):
+        """ Test if first_name or sur_name can allow numbers."""
+
+        data = {'first_name': '123kyaodndo',
+            'sur_name' : '73883',
+            'username': 'chadwalt',
+            'password': '1234',
+            'email': 'chadwalt@outlook.com'
+            }
+
+        resp = self.client().post('/auth/register', data = data)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Numbers not allowed', str(resp.data))
 
     def test_account_create(self):
         """ Test user account registration using the POST request. """
