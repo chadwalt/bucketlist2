@@ -5,6 +5,7 @@ from flask_api import FlaskAPI
 
 # Import SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
+import re
 
 ## Import the config file in the instance folder.
 from instance.config import app_config, ITEMS_PER_PAGE
@@ -36,12 +37,18 @@ def create_app(config_name):
     CORS(app) ## Enable Cross Site Origin.
     app.config['CORS_HEADERS'] = 'Content-Type'
 
+    ## This will handle the index route.
     @app.route('/', methods=['POST', 'GET'])
     def index():
         """ Home page (Documentation Page.)
         This page has the Documentation for the API... Using the flassger documentation
         """
         return render_template("index.html")
+
+    ## This will handle the routes if he route does not exist, it will return the 404 errors.
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return jsonify({'error': 'Page not found.'}), 404
 
     ## This route is for registering a user.
     @app.route('/auth/register', methods=['POST'])
@@ -92,6 +99,13 @@ def create_app(config_name):
             email = request.form['email']
 
             if first_name and sur_name and username and password: ## Confirm that the required fields are provided.
+                ## Check if valid inputs are provided
+                valid_first_name = re.search(r'[0-9]+', first_name) ## Search for numbers in the first_name
+                valid_sur_name = re.search(r'[0-9]+', sur_name) ## Search for numbers in the first_name
+
+                if valid_sur_name or valid_first_name:
+                    return jsonify({'success': False, 'msg': 'Numbers not allowed in the First Name or Last Name fields'})
+
                 ## Check if the user already exists.
                 user = Users.query.filter_by(username=username).first();
                 if not user:
@@ -107,7 +121,7 @@ def create_app(config_name):
                 else:
                     return jsonify({'success': False, 'msg': 'User already exists'})
             else:
-                return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
+                return jsonify({'success': False, 'msg': 'Please provide all fields'})
 
     ## This is the route for user login.
     @app.route('/auth/login', methods=['POST'])

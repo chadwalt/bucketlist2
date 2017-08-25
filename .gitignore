@@ -80,7 +80,7 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
+#.env
 .venv
 env/
 venv/
@@ -104,3 +104,6 @@ bin/
 # python files.
 lib64
 pyvenv.cfg
+
+#Migrations
+migrations/
