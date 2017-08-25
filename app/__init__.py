@@ -1,23 +1,12 @@
 """ Setting up the application """
 
-# Import flask_api
 from flask_api import FlaskAPI
-
-# Import SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
 import re
-
-## Import the config file in the instance folder.
 from instance.config import app_config, ITEMS_PER_PAGE
-
 from flask import request, jsonify, abort,render_template
-
-from flask_bcrypt import Bcrypt ## Import the encryption module for flask.
-
-## Import flasgger for API documentation.
+from flask_bcrypt import Bcrypt
 from flasgger import Swagger
-
-## Importing flask_cors to enable cross_origin.
 from flask_cors import CORS, cross_origin
 
 # initialize sql-alchemy
