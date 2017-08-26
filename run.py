@@ -2,13 +2,11 @@
 
 ## Import the os module
 import os
-
-## Import the app => create_app function.
-from app import create_app
+from app import Auth, Bucket, Bucketlist_item
+from app.manage import *
 
 ## Get the application app_setting which is development.
 config_name = os.getenv('APP_SETTINGS')
-app = create_app(config_name)
 
 if __name__ == '__main__':
     app.run()
