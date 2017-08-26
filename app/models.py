@@ -3,7 +3,7 @@
 import datetime
 
 ## Import the database.
-from app import db
+from manage import *
 
 ## Import the JSON Web Token for authentication.
 import jwt
