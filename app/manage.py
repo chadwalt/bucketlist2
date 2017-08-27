@@ -8,11 +8,12 @@ from instance.config import app_config, ITEMS_PER_PAGE
 from flasgger import Swagger
 from flask_cors import CORS, cross_origin
 
+## Import the models
+from app.models import Users, Buckets, Bucketitems, BlacklistToken
+
 # initialize sql-alchemy
 db = SQLAlchemy()
 
-## Import the models
-from app.models import Users, Buckets, Bucketitems, BlacklistToken
 config_name = os.getenv('APP_SETTINGS')
 
 app = FlaskAPI(__name__, instance_relative_config=True)
