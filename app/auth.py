@@ -14,11 +14,6 @@ class Auth:
     CORS(app) ## Enable Cross Site Origin.
     app.config['CORS_HEADERS'] = 'Content-Type'
 
-    ## This will handle the routes if he route does not exist, it will return the 404 errors.
-    @app.errorhandler(404)
-    def page_not_found(e):
-        return jsonify({'error': 'Page not found.'}), 404
-
     ## This will handle the index route.
     @app.route('/', methods=['POST', 'GET'])
     def index():
