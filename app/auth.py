@@ -4,14 +4,11 @@ import re
 from instance.config import app_config, ITEMS_PER_PAGE
 from flask import request, jsonify, abort,render_template
 from flask_bcrypt import Bcrypt
-from flask_cors import CORS, cross_origin
 
 class Auth:
     ## Import the db configuration
-    from manage import *
-
-    CORS(app) ## Enable Cross Site Origin.
-    app.config['CORS_HEADERS'] = 'Content-Type'
+    from manage import db, app
+    from models import Users
 
     ## This will handle the index route.
     @app.route('/', methods=['POST', 'GET'])
@@ -101,7 +98,6 @@ class Auth:
 
     ## This is the route for user login.
     @app.route('/auth/login', methods=['POST'])
-    @cross_origin()
     def login():
         """ Logining a user.
         Please provide all the required fields.

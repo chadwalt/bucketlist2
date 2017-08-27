@@ -4,7 +4,6 @@ import re
 from instance.config import app_config, ITEMS_PER_PAGE
 from flask import request, jsonify, abort,render_template
 from flask_bcrypt import Bcrypt
-from flask_cors import CORS, cross_origin
 
 # initialize sql-alchemy
 db = SQLAlchemy()
@@ -12,9 +11,6 @@ db = SQLAlchemy()
 class Bucketlist_item:
     ## Import the db configuration
     from manage import *
-
-    CORS(app) ## Enable Cross Site Origin.
-    app.config['CORS_HEADERS'] = 'Content-Type'
 
     ## This will handle the routes if he route does not exist, it will return the 404 errors.
     @app.errorhandler(404)
