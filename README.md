@@ -85,20 +85,20 @@ $ flask run
 
 ### API End Points.
 
-| Request Method | End Point | Public Access |
-| --- | --- | ---|
-| POST | /auth/register | TRUE |
-| POST | /auth/login | TRUE |
-| POST | /auth/logout | TRUE |
-| POST | /auth/reset-password | TRUE |
-| POST | /buckets/ | FALSE |
-| GET |  /buckets/ | FALSE |
-| GET | /buckets/<id> | FALSE |
-| PUT | /buckets/<id> | FALSE |
-| DELETE | /buckets/<id> | FALSE |
-| POST | /bucketlists/<id>/items/ | FALSE |
-| PUT | /bucketlists/<id>/items/<item_id> | FALSE |
-| DELETE | /bucketlists/<id>/items/<item_id> | FALSE |
+| Request Method | End Point | Public Access | Description |
+| --- | --- | ---| --- |
+| POST | /auth/register | TRUE | User Registration |
+| POST | /auth/login | TRUE | User Login |
+| POST | /auth/logout | TRUE | User Logout |
+| POST | /auth/reset-password | TRUE | Resetting User Password |
+| POST | /buckets/ | FALSE | Creating Buckets |
+| GET |  /buckets/ | FALSE | Get all Buckets |
+| GET | /buckets/<id> | FALSE | Get a particular Bucket by its ID |
+| PUT | /buckets/<id> | FALSE | Update a Bucket |
+| DELETE | /buckets/<id> | FALSE | Delete a particular Bucket by its ID |
+| POST | /bucketlists/<id>/items/ | FALSE | Create a Bucket List Item by its ID |
+| PUT | /bucketlists/<id>/items/<item_id> | FALSE | Update a Bucket List Item by its ID|
+| DELETE | /bucketlists/<id>/items/<item_id> | FALSE | Delete a Bucket List Item by its ID |
 
 
 View the API Documentation on Heroku. [API Documentation](https://mybucketlist-api.herokuapp.com/apidocs/)
