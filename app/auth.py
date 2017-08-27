@@ -7,8 +7,7 @@ from flask_bcrypt import Bcrypt
 
 class Auth:
     ## Import the db configuration
-    from manage import db, app
-    from models import Users
+    from manage import app, Users
 
     ## This will handle the index route.
     @app.route('/', methods=['POST', 'GET'])
