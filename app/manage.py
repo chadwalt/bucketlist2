@@ -14,6 +14,7 @@ from app.models import Users, Buckets, Bucketitems, BlacklistToken
 config_name = os.getenv('APP_SETTINGS')
 
 app = FlaskAPI(__name__, instance_relative_config=True)
+swagger = Swagger(app) ## Adding swagger.
 app.config.from_object(app_config[config_name])
 app.config.from_pyfile('config.py')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
