@@ -83,4 +83,22 @@ createdb test_db
 $ flask run
 ```
 
+### API End Points.
+
+| Request Method | End Point | Public Access |
+| --- | --- | ---|
+| POST | /auth/register | TRUE |
+| POST | /auth/login | TRUE |
+| POST | /auth/logout | TRUE |
+| POST | /auth/reset-password | TRUE |
+| POST | /buckets/ | FALSE |
+| GET |  /buckets/ | FALSE |
+| GET | /buckets/<id> | FALSE |
+| PUT | /buckets/<id> | FALSE |
+| DELETE | /buckets/<id> | FALSE |
+| POST | /bucketlists/<id>/items/ | FALSE |
+| PUT | /bucketlists/<id>/items/<item_id> | FALSE |
+| DELETE | /bucketlists/<id>/items/<item_id> | FALSE |
+
+
 View the API Documentation on Heroku. [API Documentation](https://mybucketlist-api.herokuapp.com/apidocs/)
