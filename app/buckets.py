@@ -4,7 +4,6 @@ import re
 from instance.config import app_config, ITEMS_PER_PAGE
 from flask import request, jsonify, abort,render_template
 from flask_bcrypt import Bcrypt
-from flasgger import Swagger
 from flask_cors import CORS, cross_origin
 
 # initialize sql-alchemy
