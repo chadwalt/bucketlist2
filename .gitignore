@@ -107,3 +107,6 @@ pyvenv.cfg
 
 #Migrations
 migrations/
+
+#vscode
+.DS_Store
