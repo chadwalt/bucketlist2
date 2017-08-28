@@ -5,9 +5,11 @@ from instance.config import app_config, ITEMS_PER_PAGE
 from flask import request, jsonify, abort,render_template
 from flask_bcrypt import Bcrypt
 
+## Import the db configuration
+from manage import app
+from app.models import Users
+
 class Auth:
-    ## Import the db configuration
-    from manage import app, Users
 
     ## This will handle the index route.
     @app.route('/', methods=['POST', 'GET'])
