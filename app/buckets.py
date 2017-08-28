@@ -10,7 +10,7 @@ db = SQLAlchemy()
 
 class Bucket:
     ## Import the db configuration
-    from manage import app, Users
+    from manage import app
 
     ## This will handle the routes if he route does not exist, it will return the 404 errors.
     @app.errorhandler(404)
