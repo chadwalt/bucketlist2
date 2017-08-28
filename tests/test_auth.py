@@ -133,6 +133,12 @@ class AuthTestCase(unittest.TestCase):
         resp = self.client().post('/auth/logout',headers=dict(Authorization=''))
         self.assertIn('false', str(resp.data))
 
+    def test_invalid_token_logout(self):
+        """ Test if the token provided is valid."""
+
+        resp = self.client().post('/auth/logout',headers=dict(Authorization=1233332))
+        self.assertIn('false', str(resp.data))
+
     def test_user_reset_password(self):
         """ Test user reset password using the POST request. """
 
