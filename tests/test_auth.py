@@ -28,6 +28,12 @@ class AuthTestCase(unittest.TestCase):
             # create all tables
             db.create_all()
 
+    def test_page_not_handler(self):
+        """ This will test if the page does not exist."""
+
+        resp = self.client().post('/auth/reg')
+        self.assertEqual(resp.status_code, 404)
+
     def test_index_page_loads(self):
         """ This will test if the index page loads successfully. """
         resp = self.client().post('/')
