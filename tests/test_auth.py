@@ -126,6 +126,13 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('true', str(resp.data))
 
+
+    def test_empty_token_logout(self):
+        """ Test if the token is empty when logging out is valid. """
+
+        resp = self.client().post('/auth/logout',headers=dict(Authorization=''))
+        self.assertIn('false', str(resp.data))
+
     def test_user_reset_password(self):
         """ Test user reset password using the POST request. """
 
