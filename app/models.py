@@ -3,7 +3,7 @@
 import datetime
 
 ## Import the database.
-from manage import db
+from .manage import db
 
 ## Import the JSON Web Token for authentication.
 import jwt
