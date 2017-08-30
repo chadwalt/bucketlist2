@@ -17,7 +17,7 @@ class Auth:
         """ Home page (Documentation Page.)
         This page has the Documentation for the API... Using the flassger documentation
         """
-        return render_template("index.html")
+        return render_template("index.html"), 200
 
     ## This will handle the routes if he route does not exist, it will return the 404 errors.
     @app.errorhandler(404)
@@ -78,7 +78,7 @@ class Auth:
                 valid_sur_name = re.search(r'[0-9]+', sur_name) ## Search for numbers in the first_name
 
                 if valid_sur_name or valid_first_name:
-                    return jsonify({'success': False, 'msg': 'Numbers not allowed in the First Name or Last Name fields'})
+                    return jsonify({'success': False, 'msg': 'Numbers not allowed in the First Name or Last Name fields'}), 400
 
                 ## Check if the user already exists.
                 user = Users.query.filter_by(username=username).first();
@@ -91,11 +91,11 @@ class Auth:
                         'msg': 'User created successfully'
                     }
 
-                    return jsonify(response_obj)
+                    return jsonify(response_obj), 201
                 else:
-                    return jsonify({'success': False, 'msg': 'User already exists'})
+                    return jsonify({'success': False, 'msg': 'User already exists'}), 409
             else:
-                return jsonify({'success': False, 'msg': 'Please provide all fields'})
+                return jsonify({'success': False, 'msg': 'Please provide all fields'}), 400
 
     ## This is the route for user login.
     @app.route('/auth/login', methods=['POST'])
@@ -142,15 +142,15 @@ class Auth:
                             'auth_token': auth_token
                         }
 
-                        return jsonify(response_obj)
+                        return jsonify(response_obj), 200
                 else:
                    response_obj = {
                             'success': False,
                             'message': 'User does not exist.'
                         }
-                   return jsonify(response_obj)
+                   return jsonify(response_obj), 404
             else:
-                return jsonify({'success': False, 'msg': 'Please provide all fields'})
+                return jsonify({'success': False, 'msg': 'Please provide all fields'}), 400
 
     ## This is the route for user login.
     @app.route('/auth/logout', methods=['POST'])
@@ -194,25 +194,25 @@ class Auth:
                         'success': True,
                         'msg': 'Successfully logged out.'
                     }
-                    return jsonify(response_obj)
+                    return jsonify(response_obj), 200
                 except Exception as e:
                     response_obj = {
                         'success': False,
                         'msg': 'Failed to logout.'
                     }
-                    return jsonify(response_obj)
+                    return jsonify(response_obj), 400
             else:
                 response_obj = {
                     'success': False,
                     'msg': resp
                 }
-                return jsonify(response_obj)
+                return jsonify(response_obj), 400
         else:
             response_obj = {
                 'success': False,
                 'msg': 'Provide a valid auth token.'
             }
-            return jsonify(response_obj)
+            return jsonify(response_obj), 401
 
     ## This is the route for user resetting password.
     @app.route('/auth/reset-password', methods=['POST'])
@@ -253,7 +253,7 @@ class Auth:
                 ## Decode the token to get the user_id
                 user_id = Users.decode_auth_token(token)
                 if isinstance(user_id, str):
-                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'}), 401
 
             email = request.form['email']
             password = request.form['password']
@@ -264,11 +264,11 @@ class Auth:
 
                 if not user:
                     #abort(404) ## Raise the not found status.
-                    return jsonify({'success': False, 'msg': 'User with the specified email does not exist.'})
+                    return jsonify({'success': False, 'msg': 'User with the specified email does not exist.'}), 404
 
                 #user.password = password
                 user.password = Bcrypt().generate_password_hash(password).decode()
                 user.save()
-                return jsonify({'success': True, 'msg': 'User Password reset successfully'})
+                return jsonify({'success': True, 'msg': 'User Password reset successfully'}), 201
             else:
-                return jsonify({'success': False, 'msg': 'Please provide all fields'})
+                return jsonify({'success': False, 'msg': 'Please provide all fields'}), 400

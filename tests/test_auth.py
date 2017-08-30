@@ -34,7 +34,7 @@ class AuthTestCase(unittest.TestCase):
         resp = self.client().post('/')
         self.assertEqual(resp.status_code, 200) ## Check if the page successfully loads
 
-    def test_valid_inputs(self):
+    def test_invalid_inputs_register(self):
         """ Test if first_name or sur_name can allow numbers."""
 
         data = {'first_name': '123kyaodndo',
@@ -45,13 +45,13 @@ class AuthTestCase(unittest.TestCase):
             }
 
         resp = self.client().post('/auth/register', data = data)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 400) ## Bad Request if numbers are provided.
         self.assertIn('Numbers not allowed', str(resp.data))
 
     def test_account_create(self):
         """ Test user account registration using the POST request. """
         resp = self.client().post('/auth/register', data = self.user)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201) ## Create request if the user has been created.
         self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.
 
     def test_register_empty_fields(self):
@@ -64,42 +64,42 @@ class AuthTestCase(unittest.TestCase):
             'email': 'chadwalt@outlook.com'}
 
         resp = self.client().post('/auth/register', data = user)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 400) ## Bad request if the required fields are missing.
         self.assertIn('false', str(resp.data)) ## Searches for kyadondo in the users string.
 
     def test_user_already_exists(self):
         """ Test if the user already exists. (Registration)"""
 
         resp = self.client().post('/auth/register', data = self.user)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201) ## Create request if the user has been created.
         self.assertIn('true', str(resp.data))  ## Return false cause the account has already been created.
 
         resp = self.client().post('/auth/register', data = self.user)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 409) ## Conflict request if the user already exists.
         self.assertIn('false', str(resp.data))  ## Return false cause the account has already been created.
 
     def test_user_login(self):
         """ Test user login using the POST request. """
 
         resp = self.client().post('/auth/register', data = self.user) ## First register the user.
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201) ## Create request if the user has been created.
         self.assertIn('true', str(resp.data))  ## Return false cause the account has already been created.
 
         form_data = {'username': 'chadwalt', 'password': '123'}
         resp = self.client().post('/auth/login', data = self.form_data) ## Check if the user login details are valid.
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 200) ## OK request for successfull request.
         self.assertIn('true', str(resp.data)) ## Searches for chadwalt in the users string.
 
     def test_user_not_exist(self):
         """ Test is the user exists.. """
 
         resp = self.client().post('/auth/register', data = self.user) ## First create the user.
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201) ## Create request if the user has been created.
         self.assertIn('true', str(resp.data)) ## Searches for kyadondo in the users string.
 
         form_data = {'username': 'chadtims', 'password': '123'}
         resp = self.client().post('/auth/login', data = form_data)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 404) ## Not found request if the user does not exist.
         self.assertIn('false', str(resp.data)) ## Now check if the user exists.
 
     def test_login_empty_fields(self):
@@ -107,7 +107,7 @@ class AuthTestCase(unittest.TestCase):
 
         form_data = {'username': 'chadwalt', 'password': ''}
         resp = self.client().post('/auth/login', data = form_data)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 400) ## Bad request made by the client.
         self.assertIn('false', str(resp.data)) ## Searches for chadwalt in the users string.
 
     def test_user_logout(self):
@@ -125,7 +125,7 @@ class AuthTestCase(unittest.TestCase):
         """ Test user reset password using the POST request. """
 
         resp = self.client().post('/auth/register', data = self.user) ## First create the user.
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201) ## Create request if the user has been created.
         self.assertIn('true', str(resp.data))
 
         resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
@@ -133,14 +133,14 @@ class AuthTestCase(unittest.TestCase):
 
         form_data = {'email': 'chadwalt@outlook.com', 'password': '2342'}
         resp = self.client().post('/auth/reset-password', data = form_data, headers=dict(Authorization=token))
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201) ## Create request if the user email has been updated.
         self.assertIn('true', str(resp.data))
 
     def test_user_reset_password_validate_email(self):
         """ Test if the user with the specified email exists.. """
 
         resp = self.client().post('/auth/register', data = self.user) ## First create the user.
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201) ## Create request if the user has been created.
         self.assertIn('true', str(resp.data))
 
         resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
@@ -148,7 +148,7 @@ class AuthTestCase(unittest.TestCase):
 
         form_data = {'email': 'chadwalt@gmail.com', 'password': '2342'}
         resp = self.client().post('/auth/reset-password', data = form_data, headers=dict(Authorization=token))
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 404) ## Not found request if the user does not exist.
         self.assertIn('false', str(resp.data))
 
     def test_user_reset_password_required_fields(self):
@@ -161,7 +161,7 @@ class AuthTestCase(unittest.TestCase):
 
         form_data = {'email': '', 'password': '2342'}
         resp = self.client().post('/auth/reset-password', data = form_data, headers=dict(Authorization=token))
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 400) ## Bad request made by the client.
         self.assertIn('false', str(resp.data))
 
     def tearDown(self):
