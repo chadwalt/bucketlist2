@@ -11,14 +11,15 @@ topdir = os.path.join(os.path.dirname(__file__), "..")
 sys.path.append(topdir)
 
 ## Import the app from the app folder.
-from app import create_app, db
+from app.manage import app, db
 
 """ This class will test the users """
 class AuthTestCase(unittest.TestCase):
     ## Set it up.
     def setUp(self):
         ## Defining test variables and initialize the appliction.
-        self.app = create_app(config_name='testing');
+        #self.app = create_app(config_name='testing');
+        self.app = app
         self.client = self.app.test_client
         self.user = {'first_name': 'Timothy', 'sur_name' : 'Kyadondo', 'username': 'chadwalt', 'password': '123', 'email': 'chadwalt@outlook.com'}
         self.form_data = {'username': 'chadwalt', 'password': '123'}
