@@ -34,6 +34,12 @@ class AuthTestCase(unittest.TestCase):
         resp = self.client().post('/')
         self.assertEqual(resp.status_code, 200) ## Check if the page successfully loads
 
+    def test_page_not_found(self):
+        """ Test for page not found. """
+
+        resp = self.client().post('/auth/reger')
+        self.assertEqual(resp.status_code, 404) ## Not Found request.
+
     def test_invalid_inputs_register(self):
         """ Test if first_name or sur_name can allow numbers."""
 
