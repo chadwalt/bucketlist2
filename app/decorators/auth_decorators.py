@@ -13,3 +13,6 @@ def auth_token_required(f):
         if not token:
             return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'}), 401
     return token_required
+
+# if __name__ == "__main__":
+#     auth_token_required()

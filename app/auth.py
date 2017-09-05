@@ -4,6 +4,7 @@ import re
 from instance.config import app_config, ITEMS_PER_PAGE
 from flask import request, jsonify, abort,render_template
 from flask_bcrypt import Bcrypt
+#from decorators import auth_token_required
 
 ## Import the db configuration
 from manage import app
@@ -26,6 +27,7 @@ class Auth:
 
     ## This route is for registering a user.
     @app.route('/auth/register', methods=['POST'])
+    #@auth_token_required
     def register():
         """ Registering a user.
         Please provide all the required fields.
