@@ -4,7 +4,7 @@ import re
 from instance.config import app_config, ITEMS_PER_PAGE
 from flask import request, jsonify, abort,render_template
 from flask_bcrypt import Bcrypt
-#from decorators import auth_token_required
+from decorators import auth_token_required
 
 ## Import the db configuration
 from manage import app
@@ -156,6 +156,7 @@ class Auth:
 
     ## This is the route for user login.
     @app.route('/auth/logout', methods=['POST'])
+    @auth_token_required
     def logout():
         """ logging out a user.
         Please provide all the required fields.
@@ -178,43 +179,27 @@ class Auth:
         """
 
         # get auth token
-        auth_header = request.headers['Authorization']
-        if auth_header:
-            auth_token = auth_header
-        else:
-            auth_token = ''
-        if auth_token:
-            resp = Users.decode_auth_token(auth_token)
-            if not isinstance(resp, str):
-                # mark the token as blacklisted
-                blacklist_token = BlacklistToken(token=auth_token)
-                try:
-                    # insert the token
-                    blacklist_token.save()
+        auth_token = request.headers['Authorization']
+        
+        # mark the token as blacklisted
+        blacklist_token = BlacklistToken(token=auth_token)
+        try:
+            # insert the token
+            blacklist_token.save()
 
-                    response_obj = {
-                        'success': True,
-                        'msg': 'Successfully logged out.'
-                    }
-                    return jsonify(response_obj), 200
-                except Exception as e:
-                    response_obj = {
-                        'success': False,
-                        'msg': 'Failed to logout.'
-                    }
-                    return jsonify(response_obj), 400
-            else:
-                response_obj = {
-                    'success': False,
-                    'msg': resp
-                }
-                return jsonify(response_obj), 400
-        else:
+            response_obj = {
+                'success': True,
+                'msg': 'Successfully logged out.'
+            }
+            return jsonify(response_obj), 200
+        except Exception as error:
             response_obj = {
                 'success': False,
-                'msg': 'Provide a valid auth token.'
+                'msg': error
             }
-            return jsonify(response_obj), 401
+            return jsonify(response_obj), 400
+        
+        
 
     ## This is the route for user resetting password.
     @app.route('/auth/reset-password', methods=['POST'])
