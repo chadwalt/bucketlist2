@@ -248,15 +248,7 @@ class Auth:
                 description: User password has been reset successfully
         """
         if request.method == 'POST':
-            ## Get the authentication token from the header.
-            token = request.headers['Authorization']
-
-            if token:
-                ## Decode the token to get the user_id
-                user_id = Users.decode_auth_token(token)
-                if isinstance(user_id, str):
-                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'}), 401
-
+                        
             email = request.form['email']
             password = request.form['password']
 
