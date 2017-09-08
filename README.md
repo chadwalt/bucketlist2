@@ -89,7 +89,7 @@ $ flask run
 | --- | --- | ---| --- |
 | POST | /auth/register | TRUE | User Registration |
 | POST | /auth/login | TRUE | User Login |
-| POST | /auth/logout | TRUE | User Logout |
+| POST | /auth/logout | FALSE | User Logout |
 | POST | /auth/reset-password | TRUE | Resetting User Password |
 | POST | /buckets/ | FALSE | Creating Buckets |
 | GET |  /buckets/ | FALSE | Get all Buckets |
