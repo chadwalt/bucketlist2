@@ -8,7 +8,7 @@ topdir = os.path.join(os.path.dirname(__file__), "..")
 sys.path.append(topdir)
 
 ## Import the app from the app folder.
-from app import create_app, db
+from app.manage import app, db
 
 """ This class will test the users """
 class BucketsTestCase(unittest.TestCase):
@@ -16,7 +16,7 @@ class BucketsTestCase(unittest.TestCase):
     def setUp(self):
         ## Defining test variables and initialize the appliction.
 
-        self.app = create_app(config_name='testing');
+        self.app = app
         self.client = self.app.test_client
         self.user = {'first_name': 'Timothy', 'sur_name' : 'Kyadondo', 'username': 'chadwalt', 'password': '123', 'email': 'chadwalt@outlook.com'}
         self.bucket = {'name': 'Climbing', 'user_id': '1'}
@@ -37,9 +37,13 @@ class BucketsTestCase(unittest.TestCase):
 
         resp_bucket = self.client().post('/bucketlists/', data = self.bucket,
         headers=dict(Authorization=token)) ## Place the token in the header.
-
         self.assertEqual(resp_bucket.status_code, 200)
         self.assertIn('Climbing', str(resp_bucket.data)) ## Searches for climbing.
+
+        resp_bucket = self.client().post('/bucketlists/', data = {"name": "", "user_id": ""},
+        headers=dict(Authorization=token)) ## Place the token in the header.
+        self.assertIn("Please provide all fields", str(resp_bucket.data))
+
 
     def test_get_all_buckets(self):
         """ This will test get all the buckets using the GET request."""
@@ -102,9 +106,47 @@ class BucketsTestCase(unittest.TestCase):
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(resp.status_code, 200)
 
-        ## Then test if the user exists. should return 404
         res = self.client().delete('/bucketlists/{}'.format(json_result.get('id')), headers=dict(Authorization=token))
         self.assertEqual(res.status_code, 200)
+
+    def test_none_exist_bucket_id(self):
+        """ Test if the bucket can be deleted. """
+        resp = self.client().post('/auth/register', data = self.user) ## Creating a user
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Creating a bucket.
+        json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(resp.status_code, 200)
+
+        res = self.client().put('/bucketlists/6', headers=dict(Authorization=token))
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("Bucketlist with id 6 does not exist", str(res.data))
+
+        res = self.client().get('/bucketlists/6', headers=dict(Authorization=token))
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("Bucketlist with id 6 does not exist", str(res.data))
+
+        res = self.client().delete('/bucketlists/6', headers=dict(Authorization=token))
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("Bucketlist with id 6 does not exist", str(res.data))
+
+
+    def test_duplicate_bucket(self):
+        """ Test to check if the bucket already exists."""
+
+        resp = self.client().post('/auth/register', data = self.user) ## Creating a user
+
+        resp_login = self.client().post('/auth/login', data = self.form_data) ## Login the user.
+        token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
+
+        resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Creating a bucket.
+        self.assertEqual(resp.status_code, 200)
+
+        resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Creating a bucket.
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Bucket Already exists', str(resp.data))
 
     def tearDown(self):
         """teardown all initialized variables."""
