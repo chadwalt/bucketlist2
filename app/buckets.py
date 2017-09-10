@@ -5,12 +5,14 @@ from instance.config import app_config, ITEMS_PER_PAGE
 from flask import request, jsonify, abort,render_template
 from flask_bcrypt import Bcrypt
 
+## Import the db configuration
+from app.manage import app, Users, Buckets
+from app.decorators import auth_token_required
+
 # initialize sql-alchemy
 db = SQLAlchemy()
 
 class Bucket:
-    ## Import the db configuration
-    from manage import app
 
     ## This will handle the routes if he route does not exist, it will return the 404 errors.
     @app.errorhandler(404)
@@ -20,6 +22,7 @@ class Bucket:
 
     ## This route is for creating a bucket.
     @app.route('/bucketlists/', methods=['POST'])
+    @auth_token_required
     def add_buckets():
         """ Add Buckets.
         Please provide all the required fields.
@@ -48,13 +51,7 @@ class Bucket:
         if request.method == 'POST': ## Save bucket if the request is a post.
             ## Get the authentication token from the header.
             token = request.headers['Authorization']
-
-            if token:
-                ## Decode the token to get the user_id
-                user_id = Users.decode_auth_token(token)
-                if isinstance(user_id, str):
-                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
-
+            user_id = Users.decode_auth_token(token)
             name = request.form['name']
 
             # Check if the bucket exists.
@@ -79,6 +76,7 @@ class Bucket:
 
     ## This route is for getting all buckets.
     @app.route('/bucketlists/', methods=['GET'])
+    @auth_token_required
     def get_buckets():
         """ Get all Buckets.
         Please provide all the required fields.
@@ -115,13 +113,8 @@ class Bucket:
 
             ## Get the authentication token from the header.
             token = request.headers['Authorization']
-
-            if token:
-                ## Decode the token to get the user_id
-                user_id = Users.decode_auth_token(token)
-                if isinstance(user_id, str):
-                    return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
-
+            user_id = Users.decode_auth_token(token)
+            
             #user_id = int(request.args.get('user_id'))
             search = str(request.args.get('q'))
             page = int(request.args.get('page'))
@@ -152,6 +145,7 @@ class Bucket:
 
     ## This route is for deleting a bucket item.
     @app.route('/bucketlists/<int:id>', methods=['DELETE'])
+    @auth_token_required
     def delete_bucketlists_id(id):
         """ Delete Bucketlist.
         Please provide all the required fields.
@@ -179,12 +173,7 @@ class Bucket:
         """
         ## Get the authentication token from the header.
         token = request.headers['Authorization']
-
-        if token:
-            ## Decode the token to get the user_id
-            user_id = Users.decode_auth_token(token)
-            if isinstance(user_id, str):
-                return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+        user_id = Users.decode_auth_token(token)
 
         bucket = Buckets.query.get(id)
         if not bucket:
@@ -198,6 +187,7 @@ class Bucket:
 
     ## This route is for Editing or Updating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['PUT'])
+    @auth_token_required
     def update_bucketlists_id(id):
         """ Update/Edit Bucketlist.
         Please provide all the required fields.
@@ -230,12 +220,7 @@ class Bucket:
         """
         ## Get the authentication token from the header.
         token = request.headers['Authorization']
-
-        if token:
-            ## Decode the token to get the user_id
-            user_id = Users.decode_auth_token(token)
-            if isinstance(user_id, str):
-                return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+        user_id = Users.decode_auth_token(token)
 
         bucket = Buckets.query.get(id)
         if not bucket:
@@ -257,6 +242,7 @@ class Bucket:
 
     ## This route is for Getting a bucket.
     @app.route('/bucketlists/<int:id>', methods=['GET'])
+    @auth_token_required
     def bucketlists_id(id):
         """ Get Bucketlist.
         Please provide all the required fields.
@@ -284,12 +270,7 @@ class Bucket:
         """
         ## Get the authentication token from the header.
         token = request.headers['Authorization']
-
-        if token:
-            ## Decode the token to get the user_id
-            user_id = Users.decode_auth_token(token)
-            if isinstance(user_id, str):
-                return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
+        user_id = Users.decode_auth_token(token)
 
         bucket = Buckets.query.get(id)
         if not bucket:
