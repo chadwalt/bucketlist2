@@ -7,7 +7,7 @@ from flask import request, jsonify
 from manage import Users
 
 
-def auth_token_required(f): ## The f represents the function called before the decorator.
+def auth_token_required(f): ## The f represents the function called after the decorator.
     @wraps(f)
     def token_required(*args, **kwargs):
         ## Get the authentication token from the header.

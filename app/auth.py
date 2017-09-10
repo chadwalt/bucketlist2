@@ -7,8 +7,7 @@ from flask_bcrypt import Bcrypt
 from decorators import auth_token_required
 
 ## Import the db configuration
-from manage import app
-from app.models import Users, BlacklistToken
+from manage import app, Users, BlacklistToken
 
 class Auth:
 
