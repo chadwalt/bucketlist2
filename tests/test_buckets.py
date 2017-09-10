@@ -37,12 +37,13 @@ class BucketsTestCase(unittest.TestCase):
 
         resp_bucket = self.client().post('/bucketlists/', data = self.bucket,
         headers=dict(Authorization=token)) ## Place the token in the header.
-        self.assertEqual(resp_bucket.status_code, 200)
+        self.assertEqual(resp_bucket.status_code, 201)
         self.assertIn('Climbing', str(resp_bucket.data)) ## Searches for climbing.
 
         resp_bucket = self.client().post('/bucketlists/', data = {"name": "", "user_id": ""},
         headers=dict(Authorization=token)) ## Place the token in the header.
         self.assertIn("Please provide all fields", str(resp_bucket.data))
+        self.assertEqual(resp_bucket.status_code, 400)
 
 
     def test_get_all_buckets(self):
@@ -72,7 +73,7 @@ class BucketsTestCase(unittest.TestCase):
         token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
 
         resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Save a bucket.
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201)
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
 
         result = self.client().get('/bucketlists/{}'.format(json_result.get('id')), headers=dict(Authorization=token))
@@ -89,11 +90,12 @@ class BucketsTestCase(unittest.TestCase):
 
         resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token))
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201)
 
         data = {"name": "Mountain Climbing"}
         results = self.client().put('/bucketlists/{}'.format(json_result.get('id')), data = data, headers=dict(Authorization=token))
         self.assertIn('true', str(results.data))
+        self.assertEqual(results.status_code, 201)
 
     def test_bucket_deletion(self):
         """ Test if the bucket can be deleted. """
@@ -104,10 +106,10 @@ class BucketsTestCase(unittest.TestCase):
 
         resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Creating a bucket.
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201)
 
         res = self.client().delete('/bucketlists/{}'.format(json_result.get('id')), headers=dict(Authorization=token))
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 201)
 
     def test_none_exist_bucket_id(self):
         """ Test if the bucket can be deleted. """
@@ -118,18 +120,18 @@ class BucketsTestCase(unittest.TestCase):
 
         resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Creating a bucket.
         json_result = json.loads(resp.data.decode('utf-8').replace("'", "\""))
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201)
 
         res = self.client().put('/bucketlists/6', headers=dict(Authorization=token))
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 404)
         self.assertIn("Bucketlist with id 6 does not exist", str(res.data))
 
         res = self.client().get('/bucketlists/6', headers=dict(Authorization=token))
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 404)
         self.assertIn("Bucketlist with id 6 does not exist", str(res.data))
 
         res = self.client().delete('/bucketlists/6', headers=dict(Authorization=token))
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 404)
         self.assertIn("Bucketlist with id 6 does not exist", str(res.data))
 
 
@@ -142,10 +144,10 @@ class BucketsTestCase(unittest.TestCase):
         token = json.loads(resp_login.data.decode())['auth_token'] ## Get the authentication token.
 
         resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Creating a bucket.
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201)
 
         resp = self.client().post('/bucketlists/', data = self.bucket, headers=dict(Authorization=token)) ## Creating a bucket.
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 409)
         self.assertIn('Bucket Already exists', str(resp.data))
 
     def tearDown(self):

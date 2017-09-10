@@ -57,7 +57,7 @@ class Bucket:
             # Check if the bucket exists.
             bucket_exists = Buckets.query.filter_by(name=name).first()
             if bucket_exists:
-                return jsonify({'success': False, 'msg': 'Bucket Already exists'})
+                return jsonify({'success': False, 'msg': 'Bucket Already exists'}), 409
 
             if name and user_id: ## Confirm that the required fields are provided.
                 bucket = Buckets(name, user_id)
@@ -70,9 +70,9 @@ class Bucket:
                     'success': True,
                     'msg': 'Bucket created successfully'}
 
-                return jsonify(results)
+                return jsonify(results), 201
             else:
-                return jsonify({'success': False, 'msg': 'Please provide all fields', 'status_code': 404})
+                return jsonify({'success': False, 'msg': 'Please provide all fields'}) , 400
 
     ## This route is for getting all buckets.
     @app.route('/bucketlists/', methods=['GET'])
@@ -141,7 +141,7 @@ class Bucket:
 
                 results.append(obj)
 
-            return jsonify(results)
+            return jsonify(results), 200
 
     ## This route is for deleting a bucket item.
     @app.route('/bucketlists/<int:id>', methods=['DELETE'])
@@ -177,13 +177,13 @@ class Bucket:
 
         bucket = Buckets.query.get(id)
         if not bucket:
-            return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
+            return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)}), 404
 
         if request.method == 'DELETE': ## Save bucket if the request is a post.
             #user_id = int(request.args.get('user_id'))
             bucket.delete()
 
-            return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucket.id)})
+            return jsonify({'success': True, 'msg': 'Bucketlist {} deleted successfully'.format(bucket.id)}), 201
 
     ## This route is for Editing or Updating a bucket.
     @app.route('/bucketlists/<int:id>', methods=['PUT'])
@@ -224,7 +224,7 @@ class Bucket:
 
         bucket = Buckets.query.get(id)
         if not bucket:
-            return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
+            return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)}), 404
 
         if request.method == 'PUT': ## Save bucket if the request is a post.
             name = str(request.form.get('name'))
@@ -238,7 +238,7 @@ class Bucket:
                     'success': True,
                     'msg': 'Bucket updated successfully'}
 
-            return jsonify(results)
+            return jsonify(results), 201
 
     ## This route is for Getting a bucket.
     @app.route('/bucketlists/<int:id>', methods=['GET'])
@@ -274,7 +274,7 @@ class Bucket:
 
         bucket = Buckets.query.get(id)
         if not bucket:
-            return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)})
+            return jsonify({'success': False, 'msg': 'Bucketlist with id {} does not exist'.format(id)}), 404
 
         if request.method == 'GET': ## Return all buckets if the requet if a GET.
             result = {
@@ -284,4 +284,4 @@ class Bucket:
                 'user_id': bucket.user_id
             }
 
-            return jsonify(result);
+            return jsonify(result), 200;
