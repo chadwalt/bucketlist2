@@ -24,12 +24,6 @@ Move to the created directory
 $ cd bucketlist_api
 ```
 
-Now clone the repository.
-
-```
-git clone https://github.com/chadwalt/bucketlist2
-```
-
 Make sure you have the lastest python installed. [Python.org](https://www.python.org/downloads/)
 
 Download and install Postgressql if you dont have it. [Postgresql](https://www.postgresql.org/download/)
