@@ -19,7 +19,6 @@ before_script:
 
 # command to run tests
 script:
-  #- nosetests --with-coverage --cover-package=app
   py.test --cov=app
 
 after_success: coveralls
