@@ -423,6 +423,7 @@ def create_app(config_name):
 
             for bucket in buckets:
                 obj = {
+                    'id': bucket.id,
                     'name': bucket.name,
                     'date_created': bucket.date_created,
                     'user_id': bucket.user_id
