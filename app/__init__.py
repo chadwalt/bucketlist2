@@ -714,7 +714,7 @@ def create_app(config_name):
             bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, rows, False).items
 
             if not bucketitems:
-                abort(404) ## Raise not found error.
+                return jsonify([]);
 
             results = []
 
