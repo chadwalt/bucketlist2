@@ -677,6 +677,10 @@ def create_app(config_name):
             type: integer
             description: ID of the Bucketlist
             required: true
+         -  name: q
+            in: query
+            type: string
+            required: false
          -  name: page
             in: query
             type: integer
@@ -711,7 +715,11 @@ def create_app(config_name):
             else:
                 rows = int(request.args.get('rows'))
 
-            bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, rows, False).items
+            search = str(request.args.get('q'))
+            if search != 'None': ## Search by name
+                bucketitems = Bucketitems.query.filter(Bucketitems.name.ilike('%' + search + '%')).filter_by(bucket_id=id).paginate(page, rows, False).items
+            else:
+                bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, rows, False).items
 
             if not bucketitems:
                 return jsonify([]);
