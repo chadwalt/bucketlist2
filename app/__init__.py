@@ -415,7 +415,7 @@ def create_app(config_name):
                 rows = ITEMS_PER_PAGE
 
             if search != 'None': ## Search by name
-                buckets = Buckets.query.filter(Buckets.name.like('%' + search + '%')).filter_by(user_id=user_id).paginate(page, rows, False).items
+                buckets = Buckets.query.filter(Buckets.name.ilike('%' + search + '%')).filter_by(user_id=user_id).paginate(page, rows, False).items
             else:
                 buckets = Buckets.query.filter_by(user_id=user_id).paginate(page, rows, False).items
 
