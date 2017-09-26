@@ -404,7 +404,6 @@ def create_app(config_name):
                 if isinstance(user_id, str):
                     return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
 
-            #user_id = int(request.args.get('user_id'))
             search = str(request.args.get('q'))
             page = int(request.args.get('page'))
             rows = int(request.args.get('rows'))
@@ -436,7 +435,6 @@ def create_app(config_name):
                 }
                 results.append(obj)
 
-            # for bucket in buckets:
             obj = {
                 "buckets": results,
                 "pages": pages
@@ -728,16 +726,22 @@ def create_app(config_name):
 
             search = str(request.args.get('q'))
             if search != 'None': ## Search by name
-                bucketitems = Bucketitems.query.filter(Bucketitems.name.ilike('%' + search + '%')).filter_by(bucket_id=id).paginate(page, rows, False).items
+                bucketitems = Bucketitems.query.filter(Bucketitems.name.ilike('%' + search + '%')).filter_by(bucket_id=id).paginate(page, rows, False)
             else:
-                bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, rows, False).items
+                bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, rows, False)
+
+            pages = {'page': page, 'per_page': bucketitems.per_page, 'total': bucketitems.total, 'pages': bucketitems.pages}
+            if bucketitems.has_prev:
+                pages['prev_url'] = url_for(request.endpoint, page=bucketitems.prev_num)
+            if bucketitems.has_next:
+                pages['next_url'] =  url_for( request.endpoint, page=bucketitems.next_num)
 
             if not bucketitems:
                 return jsonify([]);
 
             results = []
 
-            for bucketitem in bucketitems:
+            for bucketitem in bucketitems.items:
                 obj = {
                     'id': bucketitem.id,
                     'name': bucketitem.name,
@@ -747,7 +751,12 @@ def create_app(config_name):
                 }
                 results.append(obj)
 
-            return jsonify(results);
+            obj = {
+                "buckets": results,
+                "pages": pages
+            }
+
+            return jsonify(obj);
 
     ## This route is for Updating a bucket.
     @app.route('/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT'])
