@@ -10,7 +10,7 @@ import re
 ## Import the config file in the instance folder.
 from instance.config import app_config, ITEMS_PER_PAGE
 
-from flask import request, jsonify, abort,render_template
+from flask import request, jsonify, abort,render_template, url_for
 
 from flask_bcrypt import Bcrypt ## Import the encryption module for flask.
 
@@ -415,23 +415,34 @@ def create_app(config_name):
                 rows = ITEMS_PER_PAGE
 
             if search != 'None': ## Search by name
-                buckets = Buckets.query.filter(Buckets.name.ilike('%' + search + '%')).filter_by(user_id=user_id).paginate(page, rows, False).items
+                buckets = Buckets.query.filter(Buckets.name.ilike('%' + search + '%')).filter_by(user_id=user_id).paginate(page, rows, False)
             else:
-                buckets = Buckets.query.filter_by(user_id=user_id).paginate(page, rows, False).items
+                buckets = Buckets.query.filter_by(user_id=user_id).paginate(page, rows, False)
+
+            pages = {'page': page, 'per_page': buckets.per_page, 'total': buckets.total, 'pages': buckets.pages}
+            if buckets.has_prev:
+                pages['prev_url'] = url_for(request.endpoint, page=buckets.prev_num)
+            if buckets.has_next:
+                pages['next_url'] =  url_for( request.endpoint, page=buckets.next_num)
 
             results = []
 
-            for bucket in buckets:
+            for bucket in buckets.items:
                 obj = {
                     'id': bucket.id,
                     'name': bucket.name,
                     'date_created': bucket.date_created,
                     'user_id': bucket.user_id
                 }
-
                 results.append(obj)
 
-            return jsonify(results)
+            # for bucket in buckets:
+            obj = {
+                "buckets": results,
+                "pages": pages
+            }
+
+            return jsonify(obj)
 
     ## This route is for deleting a bucket item.
     @app.route('/bucketlists/<int:id>', methods=['DELETE'])
