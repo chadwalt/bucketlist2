@@ -36,4 +36,4 @@ app_config = {
 }
 
 ## This is for pagination. The number of items to be shown per page.
-ITEMS_PER_PAGE = 10
+ITEMS_PER_PAGE = 8
