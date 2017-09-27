@@ -729,10 +729,13 @@ def create_app(config_name):
                 bucketitems = Bucketitems.query.filter_by(bucket_id=id).paginate(page, rows, False)
 
             pages = {'page': page, 'per_page': bucketitems.per_page, 'total': bucketitems.total, 'pages': bucketitems.pages}
+            
             if bucketitems.has_prev:
-                pages['prev_url'] = url_for("/bucketlists/{0}/items/".format(id), page=bucketitems.prev_num)
+                pages['prev_url'] = url_for(request.endpoint, id=id, page=bucketitems.prev_num)
             if bucketitems.has_next:
-                pages['next_url'] =  url_for( "/bucketlists/{0}/items/".format(id), page=bucketitems.next_num)
+                pages['next_url'] =  url_for( request.endpoint, id=id, page=bucketitems.next_num)
+
+            #import pdb; pdb.set_trace()
 
             if not bucketitems:
                 return jsonify([]);
