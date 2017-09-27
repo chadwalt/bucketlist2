@@ -714,17 +714,15 @@ def create_app(config_name):
                 if isinstance(user_id, str):
                     return jsonify({'success': False, 'msg': 'Invalid authentication token. Please login again.'})
 
-            if not request.args.get('page'):
-                page = 1
-            else:
-                page = int(request.args.get('page'))
-
-            if not request.args.get('rows'):
-                rows = ITEMS_PER_PAGE
-            else:
-                rows = int(request.args.get('rows'))
-
             search = str(request.args.get('q'))
+            page = int(request.args.get('page'))
+            rows = int(request.args.get('rows'))
+
+            if not page:
+                page = 1
+            if not rows:
+                rows = ITEMS_PER_PAGE
+
             if search != 'None': ## Search by name
                 bucketitems = Bucketitems.query.filter(Bucketitems.name.ilike('%' + search + '%')).filter_by(bucket_id=id).paginate(page, rows, False)
             else:
