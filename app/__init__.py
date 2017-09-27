@@ -730,9 +730,9 @@ def create_app(config_name):
 
             pages = {'page': page, 'per_page': bucketitems.per_page, 'total': bucketitems.total, 'pages': bucketitems.pages}
             if bucketitems.has_prev:
-                pages['prev_url'] = url_for(request.endpoint, page=bucketitems.prev_num)
+                pages['prev_url'] = url_for("/bucketlists/{0}/items/".format(id), page=bucketitems.prev_num)
             if bucketitems.has_next:
-                pages['next_url'] =  url_for( request.endpoint, page=bucketitems.next_num)
+                pages['next_url'] =  url_for( "/bucketlists/{0}/items/".format(id), page=bucketitems.next_num)
 
             if not bucketitems:
                 return jsonify([]);
